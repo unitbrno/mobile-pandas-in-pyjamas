@@ -12,12 +12,20 @@ import rx.Single;
 
 public interface ISpeechApi {
 
-    RecorderCallback realTimeProcessing(
+     void realTimeProcessing(
         int frequency,
         Language language,
         RealTimeCallback<SpeechRecognitionResult> realTimeCallback
     );
 
     Single speechToText();
+
+    RecorderCallback getCallback();
+
+    void startSpeakerIdentification(
+            String groupName
+    );
+
+    void createSpeakerModel(String userName);
 
 }

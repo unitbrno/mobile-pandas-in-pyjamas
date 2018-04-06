@@ -1,2 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.pip.phonexiaapi" />
+    package="com.pip.phonexiaapi" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+</manifest>

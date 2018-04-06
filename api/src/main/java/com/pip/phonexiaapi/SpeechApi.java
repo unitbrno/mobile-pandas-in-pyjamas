@@ -1,31 +1,33 @@
 package com.pip.phonexiaapi;
 
-import android.util.Base64;
-
 import com.pip.phonexiaapi.data.AttachDictateResult;
 import com.pip.phonexiaapi.data.Language;
+import com.pip.phonexiaapi.data.ReqResult;
+import com.pip.phonexiaapi.data.SpeakersResult;
 import com.pip.phonexiaapi.data.SpeechRecognitionResult;
 import com.pip.phonexiaapi.data.StreamResult;
 import com.pip.phonexiaapi.data.TechnologiesResult;
 import com.pip.phonexiaapi.data.Technology;
 import com.pip.phonexiaapi.service.PhonexiaService;
 
-import java.nio.charset.Charset;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 
+import okhttp3.Credentials;
 import okhttp3.Interceptor;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Emitter;
-import rx.Observable;
-import rx.Scheduler;
 import rx.Single;
 import rx.Subscriber;
-import rx.functions.Action1;
-import rx.functions.Func0;
+
 import rx.schedulers.Schedulers;
 
 /**
@@ -35,7 +37,7 @@ import rx.schedulers.Schedulers;
 public class SpeechApi implements ISpeechApi {
 
     public static final int SUCCESS_CODE = 200;
-    public static final String SERVER_API = "https://77.240.177.148:8601";
+    public static final String SERVER_API = "http://77.240.177.148:8601";
 
     public static final String USERNAME = "team2";
     public static final String PASS = "hackathon";
@@ -51,6 +53,18 @@ public class SpeechApi implements ISpeechApi {
 
     public SpeechApi() {
         OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public okhttp3.Response intercept(Chain chain) throws IOException {
+                        Request request = chain.request();
+                        request = request.newBuilder()
+                                .addHeader("Authorization",  Credentials.basic(USERNAME, PASS))
+                                .build();
+
+
+                        return chain.proceed(request);
+                    }
+                })
                 .addInterceptor(getInterceptor())
                 .build();
 
@@ -67,28 +81,19 @@ public class SpeechApi implements ISpeechApi {
     }
 
     @Override
-    public RecorderCallback realTimeProcessing(int frequency, Language language, final RealTimeCallback<SpeechRecognitionResult> realTimeCallback) {
+    public void realTimeProcessing(int frequency, Language language, final RealTimeCallback<SpeechRecognitionResult> realTimeCallback) {
         mCallback = realTimeCallback;
 
         checkTechnologiesDictate(frequency, language);
+        //startStream(frequency, language);
 
-        return new RecorderCallback() {
-            @Override
-            public void onRecording(Short[] data) {
-                sendData(mStreamId, mTaskId, data);
-            }
 
-            @Override
-            public void finished() {
-
-            }
-        };
     }
 
     private void checkTechnologiesDictate(final int frequency, final Language language) {
-        mPhonexiaService.getTechnologiesAvailable(generateToken())
+        mPhonexiaService.getTechnologiesAvailable()
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<TechnologiesResult>() {
+                .subscribe(new Subscriber<ReqResult<TechnologiesResult>>() {
                     @Override
                     public void onCompleted() {
 
@@ -96,13 +101,12 @@ public class SpeechApi implements ISpeechApi {
 
                     @Override
                     public void onError(Throwable e) {
-                        e.printStackTrace();
                         mCallback.onError(e);
                     }
 
                     @Override
-                    public void onNext(TechnologiesResult technologiesResult) {
-                        if (checkTechnologiesResult(technologiesResult, "DICTATE")) {
+                    public void onNext(ReqResult<TechnologiesResult> technologiesResult) {
+                        if (checkTechnologiesResult(technologiesResult.getResult(), "Dictate")) {
                             startStream(frequency, language);
                         }
                     }
@@ -110,9 +114,9 @@ public class SpeechApi implements ISpeechApi {
     }
 
     private void startStream(int frequency, final Language language) {
-        mPhonexiaService.startStream(frequency, null, null, generateToken())
+        mPhonexiaService.startStream(frequency, null, null)
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<StreamResult>() {
+                .subscribe(new Subscriber<ReqResult<StreamResult>>() {
                     @Override
                     public void onCompleted() {
 
@@ -124,8 +128,8 @@ public class SpeechApi implements ISpeechApi {
                     }
 
                     @Override
-                    public void onNext(StreamResult streamResult) {
-                        mStreamId = streamResult.getStream();
+                    public void onNext(ReqResult<StreamResult> streamResult) {
+                        mStreamId = streamResult.getResult().getStream();
                         attachDictate(language);
                     }
                 });
@@ -133,37 +137,9 @@ public class SpeechApi implements ISpeechApi {
 
 
     private void attachDictate(Language language) {
-        mPhonexiaService.attachDictate(mStreamId, language, generateToken())
+        mPhonexiaService.attachDictate(mStreamId, language)
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<AttachDictateResult>() {
-                               @Override
-                               public void onCompleted() {
-
-                               }
-
-                               @Override
-                               public void onError(Throwable e) {
-                                   mCallback.onError(e);
-                               }
-
-                               @Override
-                               public void onNext(AttachDictateResult attachDictateResult) {
-                                   mTaskId = attachDictateResult.getStreamTaskInfo().getId();
-                               }
-                           }
-                );
-
-    }
-
-
-    private void sendData(String streamId, final String taskId, Short[] data) {
-        if (streamId == null || taskId == null) {
-            return;
-        }
-
-        mPhonexiaService.sendChunksOfData(streamId, data, generateToken())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<Response>() {
+                .subscribe(new Subscriber<ReqResult<AttachDictateResult>>() {
                     @Override
                     public void onCompleted() {
 
@@ -175,7 +151,37 @@ public class SpeechApi implements ISpeechApi {
                     }
 
                     @Override
-                    public void onNext(Response response) {
+                    public void onNext(ReqResult<AttachDictateResult> attachDictateResult) {
+                        mTaskId = attachDictateResult.getResult().getStreamTaskInfo().getId();
+                        mCallback.onStarted();
+                    }
+                });
+
+    }
+
+
+    private void sendData(String streamId, final String taskId, short[] data) {
+        if (streamId == null || taskId == null) {
+            return;
+        }
+
+
+
+        mPhonexiaService.sendChunksOfData(streamId, data)
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<Response<ResponseBody>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mCallback.onError(e);
+                    }
+
+                    @Override
+                    public void onNext(Response<ResponseBody> response) {
                         if (response.code() == SUCCESS_CODE) { // SUCCESS
                             sendResultBack(taskId);
                         }
@@ -183,29 +189,49 @@ public class SpeechApi implements ISpeechApi {
                 });
 
 
+
+
     }
 
     private void sendResultBack(String taskId) {
-        mPhonexiaService.getResults(taskId, generateToken())
+        mPhonexiaService.getResults(taskId)
                 .subscribeOn(Schedulers.io())
-                .subscribe(
-                        new Subscriber<SpeechRecognitionResult>() {
-                            @Override
-                            public void onCompleted() {
+                .subscribe(new Subscriber<ReqResult<SpeechRecognitionResult>>() {
+                    @Override
+                    public void onCompleted() {
 
-                            }
+                    }
 
-                            @Override
-                            public void onError(Throwable e) {
-                                mCallback.onError(e);
-                            }
+                    @Override
+                    public void onError(Throwable e) {
+                        mCallback.onError(e);
+                    }
 
-                            @Override
-                            public void onNext(SpeechRecognitionResult speechRecognitionResult) {
-                                mCallback.onResult(speechRecognitionResult);
-                            }
-                        }
-                );
+                    @Override
+                    public void onNext(ReqResult<SpeechRecognitionResult> speechRecognitionResult) {
+                        mCallback.onResult(speechRecognitionResult.getResult());
+                    }
+                });
+
+
+        mPhonexiaService.getSpeakersResults(taskId)
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<ReqResult<SpeakersResult>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mCallback.onError(e);
+                    }
+
+                    @Override
+                    public void onNext(ReqResult<SpeakersResult> speakersResult) {
+                        mCallback.onSpeakerResult(speakersResult.getResult().getResults().get(0));
+                    }
+                });
     }
 
 
@@ -230,17 +256,81 @@ public class SpeechApi implements ISpeechApi {
         return interceptor;
     }
 
-    private String generateToken() {
-        String text = USERNAME + "." + PASS;
-        byte data[] = text.getBytes(Charset.forName("UTF-8"));
 
-        String base64 = Base64.encodeToString(data, Base64.DEFAULT);
+    public RecorderCallback getCallback() {
+        return new RecorderCallback() {
 
-        return "Basic " + base64;
+            @Override
+            public void onRecording(short[] data) {
+                sendData(mStreamId, mTaskId, data);
+            }
+
+            @Override
+            public void finished() {
+
+            }
+        };
     }
 
+    @Override
+    public void startSpeakerIdentification(String groupName) {
 
+        mPhonexiaService.prepareSpeakerGroup(groupName)
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                        new Subscriber<Response<ResponseBody>>() {
+                            @Override
+                            public void onCompleted() {
 
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                mCallback.onError(e);
+                            }
+
+                            @Override
+                            public void onNext(Response<ResponseBody> response) {
+                                if (response.code() == SUCCESS_CODE) {
+                                    startChecking();
+                                }
+                            }
+                        }
+                );
+    }
+
+    @Override
+    public void createSpeakerModel(String userName) {
+        mPhonexiaService.createSpeaker(userName)
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<Response<ResponseBody>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mCallback.onError(e);
+                    }
+
+                    @Override
+                    public void onNext(Response<ResponseBody> response) {
+                        if (response.code() == SUCCESS_CODE) {
+                            // TODO add wav file
+                        }
+                    }
+                });
+    }
+
+    private void startChecking() {
+        // TODO !!!!!
+    }
+
+    private void uploadWavFileToSpeakerModel(String userName) {
+        RequestBody body = RequestBody.create("", );
+
+    }
 
 
 }

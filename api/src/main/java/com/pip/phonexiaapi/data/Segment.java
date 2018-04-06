@@ -9,8 +9,8 @@ import com.google.gson.annotations.SerializedName;
 public class Segment {
     @SerializedName("channel_id")
     private long channelId;
-    private long score;
-    private long confidence;
+    private double score;
+    private double confidence;
     private long start;
     private long end;
     private String word;
@@ -19,11 +19,11 @@ public class Segment {
         return channelId;
     }
 
-    public long getScore() {
+    public double getScore() {
         return score;
     }
 
-    public long getConfidence() {
+    public double getConfidence() {
         return confidence;
     }
 
