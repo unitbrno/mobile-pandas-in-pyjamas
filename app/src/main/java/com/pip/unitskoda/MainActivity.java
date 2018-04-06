@@ -1,6 +1,7 @@
 package com.pip.unitskoda;
 
 import android.Manifest;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +19,7 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.kserno.baseclasses.BaseActivity;
 import com.kserno.baseclasses.BasePresenter;
+import com.kserno.baseclasses.BaseRecyclerAdapter;
 import com.pip.unitskoda.calendar.Attendee;
 import com.pip.unitskoda.calendar.CalendarManager;
 import com.pip.unitskoda.calendar.ParticipantAdapter;
@@ -25,6 +27,7 @@ import com.pip.unitskoda.di.main.DaggerMainComponent;
 import com.pip.unitskoda.di.main.MainComponent;
 import com.pip.unitskoda.di.main.MainModule;
 import com.pip.unitskoda.recording.Recorder;
+import com.pip.unitskoda.user.UserActivity;
 
 import java.util.List;
 
@@ -37,9 +40,11 @@ import it.macisamuele.calendarprovider.EventInfo;
  * Created by filipsollar on 6.4.18.
  */
 
-public class MainActivity extends BaseActivity implements MainContract.Screen {
+public class MainActivity extends BaseActivity implements MainContract.Screen, BaseRecyclerAdapter.ItemClickListener<Attendee> {
 
     private MainComponent mComponent;
+
+    public static final String EXTRA_ATTENDEE = "EXTRA_ATTENDEE";
 
     private Spinner spCalendar;
     private TextView tvEventName;
@@ -71,7 +76,7 @@ public class MainActivity extends BaseActivity implements MainContract.Screen {
                 })
                 .check();
 
-        setupCalendarSelects();
+
     }
 
     @Override
@@ -103,7 +108,10 @@ public class MainActivity extends BaseActivity implements MainContract.Screen {
     }
 
     private void onPermissionsGranted() {
+        setupCalendarSelects();
         mPresenter.startListening();
+
+
 
     }
 
@@ -147,4 +155,13 @@ public class MainActivity extends BaseActivity implements MainContract.Screen {
         rvParticipants.setAdapter(participantAdapter);
     }
 
+    @Override
+    public void onItemClicked(Attendee item) {
+        Intent intent = new Intent(this, UserActivity.class);
+
+        intent.putExtra(EXTRA_ATTENDEE, item);
+
+        startActivity(intent);
+
+    }
 }
