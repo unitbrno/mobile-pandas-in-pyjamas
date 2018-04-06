@@ -35,7 +35,7 @@ public class UserPresenter extends BasePresenter<UserContract.Screen> implements
 
     @Override
     public void stop() {
-
+        mWavRecorder.release();
     }
 
     @Override

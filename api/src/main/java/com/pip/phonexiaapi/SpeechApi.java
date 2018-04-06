@@ -60,6 +60,19 @@ public class SpeechApi implements ISpeechApi {
     private String mStreamId;
     private String mTaskId;
 
+    private RecorderCallback mRecorderCallback = new RecorderCallback() {
+
+        @Override
+        public void onRecording(short[] data) {
+            sendData(mStreamId, mTaskId, data);
+        }
+
+        @Override
+        public void finished() {
+
+        }
+    };
+
     private RealTimeCallback<SpeechRecognitionResult> mCallback;
 
     public SpeechApi() {
@@ -269,18 +282,7 @@ public class SpeechApi implements ISpeechApi {
 
 
     public RecorderCallback getCallback() {
-        return new RecorderCallback() {
-
-            @Override
-            public void onRecording(short[] data) {
-                sendData(mStreamId, mTaskId, data);
-            }
-
-            @Override
-            public void finished() {
-
-            }
-        };
+        return mRecorderCallback;
     }
 
     @Override
@@ -333,6 +335,11 @@ public class SpeechApi implements ISpeechApi {
                 return speakerModelsResponseReqResult.getResult().getModels();
             }
         });
+    }
+
+    @Override
+    public void stopProcessing() {
+        mCallback = null;
     }
 
 

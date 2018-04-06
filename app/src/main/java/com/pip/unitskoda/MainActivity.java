@@ -125,6 +125,7 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
 
         spCalendar.setAdapter(calendarArrayAdapter);
 
+
         // Set event info from first calendar in list
         // TODO change default select to preference
         spCalendar.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -157,9 +158,23 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
             // Participants card
             ParticipantAdapter participantAdapter = new ParticipantAdapter();
             participantAdapter.setData(attendees);
+
+            participantAdapter.addListener(this);
             rvParticipants.setAdapter(participantAdapter);
         }
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mPresenter.stop();
     }
 
     @Override

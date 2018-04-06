@@ -35,4 +35,6 @@ public interface ISpeechApi {
     void createSpeakerModel(String userName, File wavFile, ApiCallback<AudioFileInfoResult> callback);
 
     Single<List<String>> getUserModels();
+
+    void stopProcessing();
 }

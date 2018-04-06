@@ -22,30 +22,32 @@ object Recorder {
     var buffer = ShortArray(BUFFER_SIZE)
     val timer = Timer()
 
-    val recorder = AudioRecord(MediaRecorder.AudioSource.MIC,
-            RECORDER_SAMPLERATE, RECORDER_CHANNELS,
-            RECORDER_AUDIO_ENCODING, BUFFER_SIZE);
-
+    var recorder : AudioRecord? = null
     // Using callback now but could be done better with RxJava (also multiple subscribers)
     fun start(listener: (ShortArray) -> Unit) {
-        if (recorder.state == AudioRecord.STATE_INITIALIZED)
-            recorder.startRecording()
+        recorder = AudioRecord(MediaRecorder.AudioSource.MIC,
+                RECORDER_SAMPLERATE, RECORDER_CHANNELS,
+                RECORDER_AUDIO_ENCODING, BUFFER_SIZE);
+
+        if (recorder?.state == AudioRecord.STATE_INITIALIZED)
+            recorder?.startRecording()
 
         // Read audio buffer every POST_RATE_MS
-        Timer().scheduleAtFixedRate(object : TimerTask() {
+        timer.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
                 // Read audio buffer to buffer
-                val readSize = recorder.read(buffer, 0, BUFFER_SIZE)
+                val readSize = recorder?.read(buffer, 0, BUFFER_SIZE)
                 // Post result with only the size of bytes read to listener
-                listener(buffer.sliceArray(0..readSize))
+                listener(buffer.sliceArray(0..readSize!!))
             }
         }, 0, POST_RATE_MS)
     }
 
     fun stop() {
         timer.cancel()
-        recorder.stop()
-        recorder.release();
+        recorder?.stop()
+        recorder?.release()
+        recorder = null
     }
 
 }

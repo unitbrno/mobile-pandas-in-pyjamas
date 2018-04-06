@@ -137,5 +137,9 @@ public class UserActivity extends BaseActivity implements UserContract.Screen {
     }
 
 
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mPresenter.stop();
+    }
 }

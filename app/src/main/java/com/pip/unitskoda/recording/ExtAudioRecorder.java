@@ -38,6 +38,7 @@ public class ExtAudioRecorder {
         recorder = new MediaRecorder();
 
         ContentValues values = new ContentValues(3);
+
         values.put(MediaStore.MediaColumns.TITLE, fileName);
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
@@ -54,6 +55,8 @@ public class ExtAudioRecorder {
     public File stop(final Callback fileCallback) {
         recorder.stop();
         recorder.release();
+
+        recorder = null;
 
         IConvertCallback callback = new IConvertCallback() {
             @Override
@@ -75,6 +78,15 @@ public class ExtAudioRecorder {
         return file;
     }
 
+
+    public void release() {
+        if (recorder != null) {
+            recorder.release();
+            recorder.stop();
+            recorder = null;
+        }
+
+    }
     public interface Callback {
         void onSuccess(File file);
         void onFail(Throwable t);

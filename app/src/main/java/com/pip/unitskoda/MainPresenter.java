@@ -30,6 +30,7 @@ public class MainPresenter extends BasePresenter<MainContract.Screen> implements
     public MainPresenter(ISpeechApi api, Recorder mRecorder, MainContract.Screen screen) {
         super(screen);
         mApi = api;
+
     }
 
     @Override
@@ -39,7 +40,8 @@ public class MainPresenter extends BasePresenter<MainContract.Screen> implements
 
     @Override
     public void stop() {
-
+        Recorder.INSTANCE.stop();
+        mApi.stopProcessing();
     }
 
     @Override
