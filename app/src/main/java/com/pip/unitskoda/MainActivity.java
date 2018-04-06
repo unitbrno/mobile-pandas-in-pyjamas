@@ -3,21 +3,28 @@ package com.pip.unitskoda;
 import android.Manifest;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionDeniedResponse;
-import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.single.PermissionListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.kserno.baseclasses.BaseActivity;
 import com.kserno.baseclasses.BasePresenter;
+import com.pip.unitskoda.calendar.Attendee;
+import com.pip.unitskoda.calendar.Calendar;
 import com.pip.unitskoda.di.main.DaggerMainComponent;
 import com.pip.unitskoda.di.main.MainComponent;
 import com.pip.unitskoda.di.main.MainModule;
 import com.pip.unitskoda.recording.Recorder;
 
+import java.util.List;
+
 import javax.inject.Inject;
+
+import it.macisamuele.calendarprovider.CalendarInfo;
+import it.macisamuele.calendarprovider.EventInfo;
 
 /**
  * Created by filipsollar on 6.4.18.
@@ -36,24 +43,25 @@ public class MainActivity extends BaseActivity implements MainContract.Screen {
 
         // Microphone permissions
         Dexter.withActivity(this)
-                .withPermission(Manifest.permission.RECORD_AUDIO)
-                .withListener(new PermissionListener() {
+                .withPermissions(Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_CALENDAR)
+                .withListener(new MultiplePermissionsListener() {
                     @Override
-                    public void onPermissionGranted(PermissionGrantedResponse response) {
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
                         mPresenter.startListening();
+
+                        CalendarInfo calendar = Calendar.getCalendars(MainActivity.this).get(0);
+                        EventInfo event = Calendar.getCurrentEventsOfCalendar(MainActivity.this, calendar).get(0);
+                        List<Attendee> attendees = Calendar.getAttendeesOfEvent(MainActivity.this, event);
+
+                        Log.d("TAG", attendees.toString());
                     }
 
                     @Override
-                    public void onPermissionDenied(PermissionDeniedResponse response) {
-
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
-
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
                     }
                 })
                 .check();
+
     }
 
     @Override
