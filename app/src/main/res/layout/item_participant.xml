@@ -15,7 +15,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/radioGroup"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/ic_start_record" />
+        tools:src="@drawable/ic_participant" />
 
     <TextView
         android:id="@+id/textView2"
@@ -42,21 +42,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onRadioButtonClicked"
-            android:text="attend" />
+            android:drawableLeft="@drawable/ic_tick" />
 
         <RadioButton
             android:id="@+id/excused"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onRadioButtonClicked"
-            android:text="excused" />
+            android:drawableLeft="@drawable/ic_excused" />
 
         <RadioButton
             android:id="@+id/not_excused"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="onRadioButtonClicked"
-            android:text="not excused" />
+            android:drawableLeft="@drawable/ic_not_excused"
+            android:onClick="onRadioButtonClicked" />
     </RadioGroup>
 
 </android.support.constraint.ConstraintLayout>
