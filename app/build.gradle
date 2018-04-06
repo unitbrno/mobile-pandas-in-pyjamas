@@ -1,7 +1,9 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 apply from: 'https://raw.githubusercontent.com/kserno/AndroidCore/master/base/dependencies/dependencies.gradle'
+
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
@@ -32,6 +34,8 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation baseDependencies.dagger2
+    kapt baseDependencies.dagger2AnnotationProc
+    annotationProcessor baseDependencies.dagger2AnnotationProc
 
     implementation "com.kserno.androidcore:base:0.0.3"
 

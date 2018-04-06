@@ -7,11 +7,11 @@ import android.media.AudioFormat.ENCODING_PCM_16BIT
 import android.media.AudioFormat.CHANNEL_IN_MONO
 import io.reactivex.Observable
 import java.util.*
-
+import javax.inject.Inject
 
 object Recorder {
 
-    private const val RECORDER_SAMPLERATE = 8000
+    public const val RECORDER_SAMPLERATE = 8000
     private const val RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_MONO
     private const val RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT
     private const val SAMPLE_SIZE = 2
@@ -25,6 +25,8 @@ object Recorder {
     val recorder = AudioRecord(MediaRecorder.AudioSource.MIC,
             RECORDER_SAMPLERATE, RECORDER_CHANNELS,
             RECORDER_AUDIO_ENCODING, BUFFER_SIZE);
+
+
 
     fun start(listener: (ShortArray) -> Unit) {
         recorder.startRecording()
