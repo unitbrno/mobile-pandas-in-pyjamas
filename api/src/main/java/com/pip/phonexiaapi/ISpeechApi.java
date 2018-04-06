@@ -1,5 +1,8 @@
 package com.pip.phonexiaapi;
 
+import android.telecom.Call;
+
+import com.pip.phonexiaapi.data.AudioFileInfoResult;
 import com.pip.phonexiaapi.data.Language;
 import com.pip.phonexiaapi.data.SpeechRecognitionResult;
 
@@ -28,6 +31,6 @@ public interface ISpeechApi {
             String groupName
     );
 
-    void createSpeakerModel(String userName, File wavFile);
+    void createSpeakerModel(String userName, File wavFile, ApiCallback<AudioFileInfoResult> callback);
 
 }

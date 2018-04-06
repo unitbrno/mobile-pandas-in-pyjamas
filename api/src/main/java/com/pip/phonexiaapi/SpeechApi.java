@@ -304,7 +304,7 @@ public class SpeechApi implements ISpeechApi {
     }
 
     @Override
-    public void createSpeakerModel(final String userName, final File wavFile) {
+    public void createSpeakerModel(final String userName, final File wavFile, final ApiCallback<AudioFileInfoResult> callback) {
         mPhonexiaService.createSpeaker(userName)
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Subscriber<Response<ResponseBody>>() {
@@ -315,23 +315,25 @@ public class SpeechApi implements ISpeechApi {
 
                     @Override
                     public void onError(Throwable e) {
-                        mCallback.onError(e);
+                        callback.onFailure(e);
                     }
 
                     @Override
                     public void onNext(Response<ResponseBody> response) {
                         if (response.code() == SUCCESS_CODE) {
-                            uploadWavFileToSpeakerModel(userName, wavFile);
+                            uploadWavFileToSpeakerModel(userName, wavFile, callback);
                         }
                     }
                 });
     }
 
+
+
     private void startChecking() {
         // TODO !!!!!
     }
 
-    private void uploadWavFileToSpeakerModel(String userName, File wavFile) {
+    private void uploadWavFileToSpeakerModel(String userName, File wavFile, final ApiCallback<AudioFileInfoResult> callback) {
         RequestBody body = RequestBody.create(MediaType.parse("audio/wav"), wavFile );
 
         mPhonexiaService.attachAudioFileToSpeaker("/" + userName + ".wav", body)
@@ -344,12 +346,12 @@ public class SpeechApi implements ISpeechApi {
 
                     @Override
                     public void onError(Throwable e) {
-                        mCallback.onError(e);
+                        callback.onFailure(e);
                     }
 
                     @Override
                     public void onNext(ReqResult<AudioFileInfoResult> audioFileInfoResult) {
-                        System.out.println("file uploaded");
+                        callback.onSuccess(audioFileInfoResult.getResult());
                     }
                 });
     }

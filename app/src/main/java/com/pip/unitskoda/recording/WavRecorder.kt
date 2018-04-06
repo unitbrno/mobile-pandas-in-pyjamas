@@ -22,6 +22,7 @@ class WavRecorder(val filename: String) {
 
     init {
         recorder.setOutputFile(filename)
+
     }
 
     fun start() {
