@@ -26,6 +26,10 @@ android {
 repositories {
     maven {
         url 'https://dl.bintray.com/filipsollar/AndroidCore/'
+
+    }
+    maven {
+        url  "http://dl.bintray.com/macisamuele/maven"
     }
 }
 
@@ -55,6 +59,10 @@ dependencies {
 
     implementation project(':api')
     implementation 'com.karumi:dexter:4.2.0'
+
+    compile 'it.macisamuele:calendarprovider-lib:0.0.1'
+
+
 
     implementation 'com.android.support:cardview-v7:27.0.2'
 }
