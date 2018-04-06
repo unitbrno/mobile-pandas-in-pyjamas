@@ -8,11 +8,16 @@ import it.macisamuele.calendarprovider.EventInfo
 import java.util.*
 
 
-object Calendar {
+object CalendarManager {
 
     @JvmStatic
     fun getCalendars(context: Context): List<CalendarInfo> {
         return CalendarInfo.getAllCalendars(context)
+    }
+
+    @JvmStatic
+    fun getCalendarStrings(calendars: List<CalendarInfo>): List<String> {
+        return calendars.map { it.displayName }
     }
 
     @JvmStatic

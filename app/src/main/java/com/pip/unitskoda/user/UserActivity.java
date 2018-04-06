@@ -88,7 +88,7 @@ public class UserActivity extends BaseActivity implements UserContract.Screen {
     @OnClick(R.id.ibStart)
     public void onStartClicked() {
         if (mState == State.NOT_RECORDING) {
-            mPresenter.startRecording("test1@test.com");
+            mPresenter.startRecording("test2@test.com");
             mState = State.RECORDING;
         } else {
             mPresenter.stopRecording();

@@ -24,7 +24,7 @@ public class UserPresenter extends BasePresenter<UserContract.Screen> implements
     public UserPresenter(UserContract.Screen screen, ISpeechApi api) {
         super(screen);
         mApi = api;
-        mWavRecorder = new WavRecorder("record.wav");
+        mWavRecorder = new WavRecorder("./record.wav");
     }
 
     @Override
