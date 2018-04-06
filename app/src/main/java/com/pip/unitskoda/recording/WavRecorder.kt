@@ -16,24 +16,8 @@ class WavRecorder(val filename: String) {
     private val RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_MONO
     private val RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT
 
-    private val recorder = ExtAudioRecorder(true, MediaRecorder.AudioSource.MIC,
-            RECORDER_SAMPLERATE, RECORDER_CHANNELS,
-            RECORDER_AUDIO_ENCODING);
 
-    init {
-        recorder.setOutputFile(filename)
 
-    }
 
-    fun start() {
-        recorder.prepare()
-        recorder.start()
-    }
-
-    fun stop() : File {
-        recorder.stop()
-        recorder.release();
-        return File(filename)
-    }
 
 }

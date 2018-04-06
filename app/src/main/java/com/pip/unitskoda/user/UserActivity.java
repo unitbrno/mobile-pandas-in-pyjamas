@@ -1,11 +1,18 @@
 package com.pip.unitskoda.user;
 
+import android.Manifest;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.ImageButton;
 
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.PermissionListener;
 import com.kserno.baseclasses.BaseActivity;
 import com.kserno.baseclasses.BasePresenter;
 import com.pip.unitskoda.BaseApplication;
@@ -32,6 +39,8 @@ public class UserActivity extends BaseActivity implements UserContract.Screen {
     @BindView(R.id.ibStart)
     ImageButton ibStart;
 
+
+
     @Override
     protected void createPresenter() {
         getComponent().inject(this);
@@ -51,12 +60,51 @@ public class UserActivity extends BaseActivity implements UserContract.Screen {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ibStart = findViewById(R.id.ibStart);
+        Dexter.withActivity(this)
+                .withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse response) {
+
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse response) {
+
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+
+                    }
+                })
+                .check();
+        Dexter.withActivity(this)
+                .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                .withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse response) {
+
+                    }
+
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse response) {
+
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+
+                    }
+                })
+                .check();
         ibStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onStartClicked();
             }
         });
+
 
     }
 
@@ -88,7 +136,7 @@ public class UserActivity extends BaseActivity implements UserContract.Screen {
     @OnClick(R.id.ibStart)
     public void onStartClicked() {
         if (mState == State.NOT_RECORDING) {
-            mPresenter.startRecording("test1@test.com");
+            mPresenter.startRecording("test3@test.com", "record");
             mState = State.RECORDING;
         } else {
             mPresenter.stopRecording();

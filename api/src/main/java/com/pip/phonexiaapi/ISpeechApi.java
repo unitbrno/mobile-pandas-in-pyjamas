@@ -7,6 +7,7 @@ import com.pip.phonexiaapi.data.Language;
 import com.pip.phonexiaapi.data.SpeechRecognitionResult;
 
 import java.io.File;
+import java.util.List;
 
 import rx.Observable;
 import rx.Single;
@@ -33,4 +34,5 @@ public interface ISpeechApi {
 
     void createSpeakerModel(String userName, File wavFile, ApiCallback<AudioFileInfoResult> callback);
 
+    Single<List<String>> getUserModels();
 }

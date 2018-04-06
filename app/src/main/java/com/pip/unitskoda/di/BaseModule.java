@@ -18,6 +18,7 @@ public class BaseModule {
 
     public BaseModule(Context appContext, ISpeechApi speechApi) {
         mSpeechApi = speechApi;
+        this.appContext = appContext;
     }
 
     @Provides

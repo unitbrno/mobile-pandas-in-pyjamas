@@ -6,6 +6,7 @@ import com.pip.phonexiaapi.data.AttachDictateResult;
 import com.pip.phonexiaapi.data.AudioFileInfoResult;
 import com.pip.phonexiaapi.data.Language;
 import com.pip.phonexiaapi.data.ReqResult;
+import com.pip.phonexiaapi.data.SpeakerModelsResponse;
 import com.pip.phonexiaapi.data.SpeakersResult;
 import com.pip.phonexiaapi.data.SpeechRecognitionResult;
 import com.pip.phonexiaapi.data.StreamResult;
@@ -16,6 +17,7 @@ import com.pip.phonexiaapi.service.PhonexiaService;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.List;
 
 import okhttp3.Credentials;
 import okhttp3.Interceptor;
@@ -25,13 +27,17 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Observable;
 import rx.Single;
 import rx.Subscriber;
 
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -41,6 +47,7 @@ import rx.schedulers.Schedulers;
 public class SpeechApi implements ISpeechApi {
 
     public static final int SUCCESS_CODE = 200;
+    public static final String RECORD = "/record.wav";
     public static final String SERVER_API = "http://77.240.177.148:8601";
 
     public static final String USERNAME = "team2";
@@ -305,28 +312,28 @@ public class SpeechApi implements ISpeechApi {
 
     @Override
     public void createSpeakerModel(final String userName, final File wavFile, final ApiCallback<AudioFileInfoResult> callback) {
-        mPhonexiaService.createSpeaker(userName)
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<Response<ResponseBody>>() {
-                    @Override
-                    public void onCompleted() {
+        mPhonexiaService.createSpeaker(userName).enqueue(new Callback<Response<ResponseBody>>() {
+            @Override
+            public void onResponse(Call<Response<ResponseBody>> call, Response<Response<ResponseBody>> response) {
+                uploadWavFileToSpeakerModel(userName, wavFile, callback);
+            }
 
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        callback.onFailure(e);
-                    }
-
-                    @Override
-                    public void onNext(Response<ResponseBody> response) {
-                        if (response.code() == SUCCESS_CODE) {
-                            uploadWavFileToSpeakerModel(userName, wavFile, callback);
-                        }
-                    }
-                });
+            @Override
+            public void onFailure(Call<Response<ResponseBody>> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 
+    @Override
+    public Single<List<String>> getUserModels() {
+        return mPhonexiaService.getSpeakerModels().map(new Func1<ReqResult<SpeakerModelsResponse>, List<String>>() {
+            @Override
+            public List<String> call(ReqResult<SpeakerModelsResponse> speakerModelsResponseReqResult) {
+                return speakerModelsResponseReqResult.getResult().getModels();
+            }
+        });
+    }
 
 
     private void startChecking() {
@@ -336,22 +343,17 @@ public class SpeechApi implements ISpeechApi {
     private void uploadWavFileToSpeakerModel(String userName, File wavFile, final ApiCallback<AudioFileInfoResult> callback) {
         RequestBody body = RequestBody.create(MediaType.parse("audio/wav"), wavFile );
 
-        mPhonexiaService.attachAudioFileToSpeaker("/" + userName + ".wav", body)
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<ReqResult<AudioFileInfoResult>>() {
+        mPhonexiaService.attachAudioFileToSpeaker(userName, RECORD,body)
+                .enqueue(new Callback<ReqResult<AudioFileInfoResult>>() {
                     @Override
-                    public void onCompleted() {
-
+                    public void onResponse(Call<ReqResult<AudioFileInfoResult>> call, Response<ReqResult<AudioFileInfoResult>> response) {
+                        callback.onSuccess(response.body().getResult());
                     }
 
                     @Override
-                    public void onError(Throwable e) {
-                        callback.onFailure(e);
-                    }
-
-                    @Override
-                    public void onNext(ReqResult<AudioFileInfoResult> audioFileInfoResult) {
-                        callback.onSuccess(audioFileInfoResult.getResult());
+                    public void onFailure(Call<ReqResult<AudioFileInfoResult>> call, Throwable t) {
+                        t.printStackTrace();
+                        callback.onFailure(t);
                     }
                 });
     }
