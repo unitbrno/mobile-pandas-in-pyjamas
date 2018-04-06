@@ -10,7 +10,7 @@ public interface UserContract {
         void success();
     }
     interface Presenter {
-        void startRecording(String username);
+        void startRecording(String username, String path);
         void stopRecording();
     }
 }

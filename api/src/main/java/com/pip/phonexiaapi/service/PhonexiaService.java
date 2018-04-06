@@ -4,6 +4,7 @@ import com.pip.phonexiaapi.data.AttachDictateResult;
 import com.pip.phonexiaapi.data.AudioFileInfoResult;
 import com.pip.phonexiaapi.data.Language;
 import com.pip.phonexiaapi.data.ReqResult;
+import com.pip.phonexiaapi.data.SpeakerModelsResponse;
 import com.pip.phonexiaapi.data.SpeakerStreamResult;
 import com.pip.phonexiaapi.data.SpeakersResult;
 import com.pip.phonexiaapi.data.SpeechRecognitionResult;
@@ -13,6 +14,7 @@ import com.pip.phonexiaapi.request.SpeakerModels;
 
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -94,12 +96,13 @@ public interface PhonexiaService {
     // <------ Speaker identification begin ------>
 
     @POST("/technologies/speakerid/speakermodels/{name}")
-    Single<Response<ResponseBody>> createSpeaker(
+    Call<Response<ResponseBody>> createSpeaker(
             @Path("name") String name
     );
 
     @POST("/technologies/speakerid/speakermodels/{name}/audiofile")
-    Single<ReqResult<AudioFileInfoResult>> attachAudioFileToSpeaker(
+    Call<ReqResult<AudioFileInfoResult>> attachAudioFileToSpeaker(
+            @Path("name") String userName,
             @Query("path") String path,
             @Body RequestBody audioData
     );
@@ -142,6 +145,8 @@ public interface PhonexiaService {
     // <------- Speaker identification end --------->
 
 
+    @GET("/technologies/speakerid/speakermodels")
+    Single<ReqResult<SpeakerModelsResponse>> getSpeakerModels();
 
 
 
