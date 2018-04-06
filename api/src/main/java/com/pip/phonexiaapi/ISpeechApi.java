@@ -3,6 +3,8 @@ package com.pip.phonexiaapi;
 import com.pip.phonexiaapi.data.Language;
 import com.pip.phonexiaapi.data.SpeechRecognitionResult;
 
+import java.io.File;
+
 import rx.Observable;
 import rx.Single;
 
@@ -26,6 +28,6 @@ public interface ISpeechApi {
             String groupName
     );
 
-    void createSpeakerModel(String userName);
+    void createSpeakerModel(String userName, File wavFile);
 
 }

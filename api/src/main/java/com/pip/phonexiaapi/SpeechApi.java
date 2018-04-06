@@ -1,6 +1,9 @@
 package com.pip.phonexiaapi;
 
+import android.util.Log;
+
 import com.pip.phonexiaapi.data.AttachDictateResult;
+import com.pip.phonexiaapi.data.AudioFileInfoResult;
 import com.pip.phonexiaapi.data.Language;
 import com.pip.phonexiaapi.data.ReqResult;
 import com.pip.phonexiaapi.data.SpeakersResult;
@@ -10,6 +13,7 @@ import com.pip.phonexiaapi.data.TechnologiesResult;
 import com.pip.phonexiaapi.data.Technology;
 import com.pip.phonexiaapi.service.PhonexiaService;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -300,7 +304,7 @@ public class SpeechApi implements ISpeechApi {
     }
 
     @Override
-    public void createSpeakerModel(String userName) {
+    public void createSpeakerModel(final String userName, final File wavFile) {
         mPhonexiaService.createSpeaker(userName)
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Subscriber<Response<ResponseBody>>() {
@@ -317,7 +321,7 @@ public class SpeechApi implements ISpeechApi {
                     @Override
                     public void onNext(Response<ResponseBody> response) {
                         if (response.code() == SUCCESS_CODE) {
-                            // TODO add wav file
+                            uploadWavFileToSpeakerModel(userName, wavFile);
                         }
                     }
                 });
@@ -327,9 +331,27 @@ public class SpeechApi implements ISpeechApi {
         // TODO !!!!!
     }
 
-    private void uploadWavFileToSpeakerModel(String userName) {
-        RequestBody body = RequestBody.create("", );
+    private void uploadWavFileToSpeakerModel(String userName, File wavFile) {
+        RequestBody body = RequestBody.create(MediaType.parse("audio/wav"), wavFile );
 
+        mPhonexiaService.attachAudioFileToSpeaker("/" + userName + ".wav", body)
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<ReqResult<AudioFileInfoResult>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mCallback.onError(e);
+                    }
+
+                    @Override
+                    public void onNext(ReqResult<AudioFileInfoResult> audioFileInfoResult) {
+                        System.out.println("file uploaded");
+                    }
+                });
     }
 
 

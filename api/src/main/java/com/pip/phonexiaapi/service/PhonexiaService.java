@@ -11,11 +11,13 @@ import com.pip.phonexiaapi.data.StreamResult;
 import com.pip.phonexiaapi.data.TechnologiesResult;
 import com.pip.phonexiaapi.request.SpeakerModels;
 
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
@@ -96,11 +98,10 @@ public interface PhonexiaService {
             @Path("name") String name
     );
 
-
     @POST("/technologies/speakerid/speakermodels/{name}/audiofile")
     Single<ReqResult<AudioFileInfoResult>> attachAudioFileToSpeaker(
             @Query("path") String path,
-            @Body short[] audioData
+            @Body RequestBody audioData
     );
 
 

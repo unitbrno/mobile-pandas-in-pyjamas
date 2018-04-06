@@ -8,11 +8,12 @@ import java.util.List;
 
 public class BaseResult {
 
-    private int result;
+    private int version;
     private String name;
 
-    public int getResult() {
-        return result;
+
+    public int getVersion() {
+        return version;
     }
 
     public String getName() {

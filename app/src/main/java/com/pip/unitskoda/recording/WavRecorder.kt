@@ -6,10 +6,11 @@ import android.media.MediaRecorder
 import android.media.AudioFormat.ENCODING_PCM_16BIT
 import android.media.AudioFormat.CHANNEL_IN_MONO
 import io.reactivex.Observable
+import java.io.File
 import java.util.*
 
 
-class WavRecorder(filename: String) {
+class WavRecorder(val filename: String) {
 
     val RECORDER_SAMPLERATE = 8000
     private val RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_MONO
@@ -28,9 +29,10 @@ class WavRecorder(filename: String) {
         recorder.start()
     }
 
-    fun stop() {
+    fun stop() : File {
         recorder.stop()
         recorder.release();
+        return File(filename)
     }
 
 }
