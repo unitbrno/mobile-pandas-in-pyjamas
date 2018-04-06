@@ -135,16 +135,23 @@ public class MainActivity extends BaseActivity implements MainContract.Screen {
     }
 
     private void updateEvent(CalendarInfo currentCalendar) {
-        EventInfo event = CalendarManager.getCurrentEventsOfCalendar(MainActivity.this, currentCalendar).get(0);
-        List<Attendee> attendees = CalendarManager.getAttendeesOfEvent(MainActivity.this, event);
+        List<EventInfo> events = CalendarManager.getCurrentEventsOfCalendar(MainActivity.this, currentCalendar);
 
-        // Event card
-        tvEventName.setText(event.getTitle());
+        if (events.isEmpty()) {
+            // TODO display no pending events
+        } else {
+            EventInfo event = events.get(0);
+            List<Attendee> attendees = CalendarManager.getAttendeesOfEvent(MainActivity.this, event);
 
-        // Participants card
-        ParticipantAdapter participantAdapter = new ParticipantAdapter();
-        participantAdapter.setData(attendees);
-        rvParticipants.setAdapter(participantAdapter);
+            // Event card
+            tvEventName.setText(event.getTitle());
+
+            // Participants card
+            ParticipantAdapter participantAdapter = new ParticipantAdapter();
+            participantAdapter.setData(attendees);
+            rvParticipants.setAdapter(participantAdapter);
+        }
+
     }
 
 }
