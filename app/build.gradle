@@ -32,7 +32,7 @@ repositories {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:appcompat-v7:27.0.2'
     implementation baseDependencies.dagger2
     kapt baseDependencies.dagger2AnnotationProc
     annotationProcessor baseDependencies.dagger2AnnotationProc
@@ -55,4 +55,6 @@ dependencies {
 
     implementation project(':api')
     implementation 'com.karumi:dexter:4.2.0'
+
+    implementation 'com.android.support:cardview-v7:27.0.2'
 }
