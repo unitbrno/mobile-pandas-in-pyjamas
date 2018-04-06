@@ -3,6 +3,8 @@ package com.pip.unitskoda;
 import android.Manifest;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,6 +20,7 @@ import com.kserno.baseclasses.BaseActivity;
 import com.kserno.baseclasses.BasePresenter;
 import com.pip.unitskoda.calendar.Attendee;
 import com.pip.unitskoda.calendar.CalendarManager;
+import com.pip.unitskoda.calendar.ParticipantAdapter;
 import com.pip.unitskoda.di.main.DaggerMainComponent;
 import com.pip.unitskoda.di.main.MainComponent;
 import com.pip.unitskoda.di.main.MainModule;
@@ -40,6 +43,7 @@ public class MainActivity extends BaseActivity implements MainContract.Screen {
 
     private Spinner spCalendar;
     private TextView tvEventName;
+    private RecyclerView rvParticipants;
 
     @Inject
     MainPresenter mPresenter;
@@ -50,6 +54,7 @@ public class MainActivity extends BaseActivity implements MainContract.Screen {
 
         spCalendar = findViewById(R.id.spCalendar);
         tvEventName = findViewById(R.id.tvEventName);
+        rvParticipants = findViewById(R.id.rvParticipants);
 
         // Microphone permissions
         Dexter.withActivity(this)
@@ -57,7 +62,7 @@ public class MainActivity extends BaseActivity implements MainContract.Screen {
                 .withListener(new MultiplePermissionsListener() {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
-                        onReady();
+                        onPermissionsGranted();
                     }
 
                     @Override
@@ -66,6 +71,7 @@ public class MainActivity extends BaseActivity implements MainContract.Screen {
                 })
                 .check();
 
+        setupCalendarSelects();
     }
 
     @Override
@@ -96,10 +102,9 @@ public class MainActivity extends BaseActivity implements MainContract.Screen {
         return mComponent;
     }
 
-    private void onReady() {
-        setupCalendarSelects();
-
+    private void onPermissionsGranted() {
         mPresenter.startListening();
+
     }
 
     private void setupCalendarSelects() {
@@ -125,14 +130,21 @@ public class MainActivity extends BaseActivity implements MainContract.Screen {
 
             }
         });
+
+        rvParticipants.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void updateEvent(CalendarInfo currentCalendar) {
         EventInfo event = CalendarManager.getCurrentEventsOfCalendar(MainActivity.this, currentCalendar).get(0);
         List<Attendee> attendees = CalendarManager.getAttendeesOfEvent(MainActivity.this, event);
 
+        // Event card
         tvEventName.setText(event.getTitle());
 
+        // Participants card
+        ParticipantAdapter participantAdapter = new ParticipantAdapter();
+        participantAdapter.setData(attendees);
+        rvParticipants.setAdapter(participantAdapter);
     }
 
 }
