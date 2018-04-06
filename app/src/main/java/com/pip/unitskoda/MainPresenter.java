@@ -21,7 +21,6 @@ import kotlin.jvm.functions.Function1;
 public class MainPresenter extends BasePresenter<MainContract.Screen> implements MainContract.Presenter{
 
     private ISpeechApi mApi;
-    private Recorder mRecorder;
 
     private static final String TAG = MainPresenter.class.getSimpleName();
 
@@ -43,7 +42,7 @@ public class MainPresenter extends BasePresenter<MainContract.Screen> implements
 
     @Override
     public void startListening() {
-        mRecorder.start(new Function1<short[], Unit>() {
+        Recorder.INSTANCE.start(new Function1<short[], Unit>() {
             @Override
             public Unit invoke(short[] shorts) {
 

@@ -9,7 +9,7 @@ android {
     defaultConfig {
         applicationId "com.pip.unitskoda"
         minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion 25
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -37,6 +37,10 @@ dependencies {
     kapt baseDependencies.dagger2AnnotationProc
     annotationProcessor baseDependencies.dagger2AnnotationProc
 
+    implementation baseDependencies.guava
+
+    implementation appDependencies.butterknife
+    annotationProcessor appDependencies.butterknifeAnnotationProc
     implementation "com.kserno.androidcore:base:0.0.3"
 
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
@@ -50,4 +54,5 @@ dependencies {
     implementation rxDependencies.rxJava2
 
     implementation project(':api')
+    implementation 'com.karumi:dexter:4.2.0'
 }

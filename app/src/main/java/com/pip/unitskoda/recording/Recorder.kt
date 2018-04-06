@@ -7,7 +7,7 @@ import android.media.AudioFormat.ENCODING_PCM_16BIT
 import android.media.AudioFormat.CHANNEL_IN_MONO
 import io.reactivex.Observable
 import java.util.*
-import javax.inject.Inject
+
 
 object Recorder {
 
@@ -26,13 +26,13 @@ object Recorder {
             RECORDER_SAMPLERATE, RECORDER_CHANNELS,
             RECORDER_AUDIO_ENCODING, BUFFER_SIZE);
 
-
-
+    // Using callback now but could be done better with RxJava (also multiple subscribers)
     fun start(listener: (ShortArray) -> Unit) {
-        recorder.startRecording()
+        if (recorder.state == AudioRecord.STATE_INITIALIZED)
+            recorder.startRecording()
 
         // Read audio buffer every POST_RATE_MS
-        Timer().scheduleAtFixedRate(object: TimerTask() {
+        Timer().scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
                 // Read audio buffer to buffer
                 val readSize = recorder.read(buffer, 0, BUFFER_SIZE)

@@ -35,7 +35,7 @@ import rx.schedulers.Schedulers;
 public class SpeechApi implements ISpeechApi {
 
     public static final int SUCCESS_CODE = 200;
-    public static final String SERVER_API = "77.240.177.148:8601";
+    public static final String SERVER_API = "https://77.240.177.148:8601";
 
     public static final String USERNAME = "team2";
     public static final String PASS = "hackathon";
