@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -24,6 +25,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.kserno.baseclasses.BaseActivity;
 import com.kserno.baseclasses.BasePresenter;
 import com.kserno.baseclasses.BaseRecyclerAdapter;
+import com.pip.phonexiaapi.data.Language;
 import com.pip.unitskoda.calendar.Attendee;
 import com.pip.unitskoda.calendar.CalendarManager;
 import com.pip.unitskoda.calendar.ParticipantAdapter;
@@ -31,6 +33,8 @@ import com.pip.unitskoda.di.main.DaggerMainComponent;
 import com.pip.unitskoda.di.main.MainComponent;
 import com.pip.unitskoda.di.main.MainModule;
 import com.pip.unitskoda.meeting.MeetingActivity;
+import com.pip.unitskoda.memo.Memo;
+import com.pip.unitskoda.memo.MemoAdapter;
 import com.pip.unitskoda.recording.Recorder;
 import com.pip.unitskoda.user.UserActivity;
 
@@ -71,6 +75,8 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
 
     private boolean isMeetingStarted = false;
 
+    private MemoAdapter mMemoAdapter;
+
     @Inject
     MainPresenter mPresenter;
 
@@ -87,6 +93,11 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
         btAction = findViewById(R.id.btAction);
         btAction.setEnabled(false);
         tvDate = findViewById(R.id.tvDate);
+
+
+        mMemoAdapter = new MemoAdapter();
+        rvMemos.setAdapter(mMemoAdapter);
+        rvMemos.setLayoutManager(new LinearLayoutManager(this));
 
         mAdapter = new ParticipantAdapter();
         mAdapter.addListener(this);
@@ -252,7 +263,10 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
 
     @Override
     public void showText(List<String> text) {
+        KeywordHandler handler = new KeywordHandler();
+        List<Memo> memos = handler.parse(text, Language.ENGLISH);
 
+        mMemoAdapter.setData(memos);
     }
 
     private boolean checkStartCondition(List<String> userModels) {

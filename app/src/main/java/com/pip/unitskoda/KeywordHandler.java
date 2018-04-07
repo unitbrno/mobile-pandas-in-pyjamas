@@ -1,6 +1,7 @@
-package com.pip.phonexiaapi;
+package com.pip.unitskoda;
 
 import com.pip.phonexiaapi.data.Language;
+import com.pip.unitskoda.memo.Memo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,7 +57,7 @@ public class KeywordHandler {
                 break;
             case RECORDING:
                 if (preLastWord.equals(getMapByLang().get(KeyWord.END_RECORDING))
-                        && lastWord.equals(getMapByLang().get(KeyWord.END_MEETING).get(1))) {
+                        && lastWord.equals(getMapByLang().get(KeyWord.END_RECORDING).get(1))) {
                     mState = State.MEETING;
                     mCallback.onEndRecording(mTokens);
                     break;
@@ -102,6 +103,41 @@ public class KeywordHandler {
         hashMap.put(KeyWord.END_MEETING, Arrays.asList("KONEC", "PORADY"));
 
         return hashMap;
+    }
+
+
+    public List<Memo> parse(List<String> text, Language language) {
+        mLanguage = language;
+        List<Memo> result = new ArrayList<>();
+
+        boolean recording = false;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i < text.size(); i++) {
+            String lastWord = text.get(i-1);
+            String preLastWord = text.get(i);
+
+            if (recording && preLastWord.equals(getMapByLang().get(KeyWord.END_RECORDING))
+                    && lastWord.equals(getMapByLang().get(KeyWord.END_RECORDING).get(1))) {
+                recording = false;
+                result.add(new Memo(null, sb.toString()));
+                continue;
+            }
+
+            if (!recording && preLastWord.equals(getMapByLang().get(KeyWord.BEGIN_RECORDING).get(0))
+                    && lastWord.equals(getMapByLang().get(KeyWord.BEGIN_RECORDING).get(1))) {
+                recording = true;
+                sb.setLength(0);
+                sb = new StringBuilder();
+                continue;
+            }
+
+            if (recording) {
+                sb.append(lastWord);
+            }
+
+        }
+
+        return result;
     }
 
     public enum State {
