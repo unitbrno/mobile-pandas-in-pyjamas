@@ -33,7 +33,7 @@ class ParticipantViewHolder(itemView: View) : BaseViewHolder<Attendee>(itemView)
     override fun update() {
         // Color participant by usermodel
         if (item.isInModel) {
-            itemView.setBackgroundColor(itemView.context.resources.getColor(R.color.primaryColor))
+            itemView.setBackgroundColor(itemView.context.resources.getColor(R.color.primaryLightColor))
         } else {
             itemView.setBackgroundColor(itemView.context.resources.getColor(R.color.material_grey_50))
         }
