@@ -31,7 +31,10 @@ import com.pip.unitskoda.meeting.MeetingActivity;
 import com.pip.unitskoda.recording.Recorder;
 import com.pip.unitskoda.user.UserActivity;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -50,7 +53,7 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
     public static final String EXTRA_ATTENDEE = "EXTRA_ATTENDEE";
 
     private Spinner spCalendar;
-    private TextView tvEventName;
+    private TextView tvEventName,tvDate;
     private RecyclerView rvParticipants;
     private Button btSelectEvent;
 
@@ -72,6 +75,7 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
         tvEventName = findViewById(R.id.tvEventName);
         rvParticipants = findViewById(R.id.rvParticipants);
         btSelectEvent = findViewById(R.id.btSelectEvent);
+        tvDate = findViewById(R.id.tvDate);
 
         mAdapter = new ParticipantAdapter();
         mAdapter.addListener(this);
@@ -184,6 +188,15 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
 
             // Event card
             tvEventName.setText(mEventInfo.getTitle());
+
+            Date startdate = mEventInfo.getStartDate();
+            Date enddate = mEventInfo.getEndDate();
+
+            Format formatter = new SimpleDateFormat("hh:mm dd. MMM yyyy");
+            String start = formatter.format(startdate);
+            String end = formatter.format(enddate);
+
+            tvDate.setText(start + " - " + end);
 
             // Participants card
             mAdapter.setData(mAttendees);

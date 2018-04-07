@@ -26,10 +26,12 @@ class ParticipantAdapter : BaseRecyclerAdapter<Attendee, ParticipantViewHolder>(
 class ParticipantViewHolder(itemView: View) : BaseViewHolder<Attendee>(itemView) {
 
     val tvName:TextView = itemView.findViewById(R.id.tvName)
+    val tvEmail:TextView = itemView.findViewById(R.id.tvEmail)
 
 
     override fun update() {
         tvName.text = item.name
+        tvEmail.text = item.email
     }
 
 
