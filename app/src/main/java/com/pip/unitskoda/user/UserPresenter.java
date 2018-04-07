@@ -5,7 +5,6 @@ import com.pip.phonexiaapi.ApiCallback;
 import com.pip.phonexiaapi.ISpeechApi;
 import com.pip.phonexiaapi.data.AudioFileInfoResult;
 import com.pip.unitskoda.recording.ExtAudioRecorder;
-import com.pip.unitskoda.recording.WavRecorder;
 
 import java.io.File;
 

@@ -26,7 +26,7 @@ object CalendarManager {
     }
 
     @JvmStatic
-    fun getAttendeesOfEvent(context: Context, eventInfo: EventInfo): List<Attendee> {
-        return AttendeesContentResolver(context).getAttendees(eventInfo.id)
+    fun getAttendeesOfEvent(context: Context, eventInfo: EventInfo, userModels: List<String>): List<Attendee> {
+        return AttendeesContentResolver(context).getAttendees(eventInfo.id, userModels)
     }
 }

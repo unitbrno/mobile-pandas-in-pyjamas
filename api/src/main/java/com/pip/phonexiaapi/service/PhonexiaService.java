@@ -96,7 +96,7 @@ public interface PhonexiaService {
     // <------ Speaker identification begin ------>
 
     @POST("/technologies/speakerid/speakermodels/{name}")
-    Call<Response<ResponseBody>> createSpeaker(
+    Call<Void> createSpeaker(
             @Path("name") String name
     );
 
@@ -108,23 +108,24 @@ public interface PhonexiaService {
     );
 
 
-    @POST("/technologies/speakerid/groups/{group_name}")
-    Single<Response<ResponseBody>> createSpeakerGroup(
+    @PUT("/technologies/speakerid/groups/{group_name}")
+    Call<Void> createSpeakerGroup(
             @Path("group_name") String groupName
     );
 
     @POST("/technologies/speakerid/groups/{group_name}/speakermodel")
-    Single<Response<ResponseBody>> addToSpeakerGroup(
+    Call<Void> addToSpeakerGroup(
+            @Path("group_name") String groupName,
             @Body SpeakerModels speakers
     );
 
-    @PUT("/technologies/speakerid/speakermodels/{user_name}/prepare?model=S")
+    @PUT("/technologies/speakerid/speakermodels/{user_name}/prepare?model=XL3")
     Single<Response<ResponseBody>> prepareSpeakerModel(
             @Path("user_name") String speakerName
     );
 
-    @PUT("/technologies/speakerid/speakermodels/{group_name}/prepare?model=S")
-    Single<Response<ResponseBody>> prepareSpeakerGroup(
+    @PUT("/technologies/speakerid/groups/{group_name}/prepare?model=XL3")
+    Call<Void> prepareSpeakerGroup(
             @Path("group_name") String groupName
     );
 
@@ -146,7 +147,7 @@ public interface PhonexiaService {
 
 
     @GET("/technologies/speakerid/speakermodels")
-    Single<ReqResult<SpeakerModelsResponse>> getSpeakerModels();
+    Call<ReqResult<SpeakerModelsResponse>> getSpeakerModels();
 
 
 

@@ -12,6 +12,7 @@ import com.pip.phonexiaapi.data.SpeechRecognitionResult;
 import com.pip.phonexiaapi.data.StreamResult;
 import com.pip.phonexiaapi.data.TechnologiesResult;
 import com.pip.phonexiaapi.data.Technology;
+import com.pip.phonexiaapi.request.SpeakerModels;
 import com.pip.phonexiaapi.service.PhonexiaService;
 
 import java.io.File;
@@ -285,54 +286,36 @@ public class SpeechApi implements ISpeechApi {
         return mRecorderCallback;
     }
 
-    @Override
-    public void startSpeakerIdentification(String groupName) {
-
-        mPhonexiaService.prepareSpeakerGroup(groupName)
-                .subscribeOn(Schedulers.io())
-                .subscribe(
-                        new Subscriber<Response<ResponseBody>>() {
-                            @Override
-                            public void onCompleted() {
-
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                mCallback.onError(e);
-                            }
-
-                            @Override
-                            public void onNext(Response<ResponseBody> response) {
-                                if (response.code() == SUCCESS_CODE) {
-                                    startChecking();
-                                }
-                            }
-                        }
-                );
-    }
 
     @Override
     public void createSpeakerModel(final String userName, final File wavFile, final ApiCallback<AudioFileInfoResult> callback) {
-        mPhonexiaService.createSpeaker(userName).enqueue(new Callback<Response<ResponseBody>>() {
+        mPhonexiaService.createSpeaker(userName).enqueue(new Callback<Void>() {
+
             @Override
-            public void onResponse(Call<Response<ResponseBody>> call, Response<Response<ResponseBody>> response) {
+            public void onResponse(Call<Void> call, Response<Void> response) {
                 uploadWavFileToSpeakerModel(userName, wavFile, callback);
+
             }
 
             @Override
-            public void onFailure(Call<Response<ResponseBody>> call, Throwable t) {
-                t.printStackTrace();
+            public void onFailure(Call<Void> call, Throwable t) {
+                callback.onFailure(t);
+
             }
+
         });
     }
 
-    @Override
-    public Single<List<String>> getUserModels() {
-        return mPhonexiaService.getSpeakerModels().map(new Func1<ReqResult<SpeakerModelsResponse>, List<String>>() {
+    public void getUserModels(final ApiCallback<List<String>> callback) {
+        mPhonexiaService.getSpeakerModels().enqueue(new Callback<ReqResult<SpeakerModelsResponse>>() {
             @Override
-            public List<String> call(ReqResult<SpeakerModelsResponse> speakerModelsResponseReqResult) {
-                return speakerModelsResponseReqResult.getResult().getModels();
+            public void onResponse(Call<ReqResult<SpeakerModelsResponse>> call, Response<ReqResult<SpeakerModelsResponse>> response) {
+                callback.onSuccess(response.body().getResult().getModels());
+            }
+
+            @Override
+            public void onFailure(Call<ReqResult<SpeakerModelsResponse>> call, Throwable t) {
+                callback.onFailure(t);
             }
         });
     }
@@ -342,8 +325,66 @@ public class SpeechApi implements ISpeechApi {
         mCallback = null;
     }
 
+    @Override
+    public void createAndPrepareGroup(final List<String> userModels, final String groupName, final ApiCallback<Boolean> callback) {
+        mPhonexiaService.createSpeakerGroup(groupName).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void>response) {
+                addUsersToGroup(userModels, groupName, callback);
+            }
 
-    private void startChecking() {
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                callback.onFailure(t);
+            }
+        });
+    }
+
+
+    private void addUsersToGroup(List<String> userModels, final String groupName, final ApiCallback<Boolean> callback) {
+        SpeakerModels models = new SpeakerModels();
+
+        models.setSpeakerNames(userModels);
+
+        mPhonexiaService.addToSpeakerGroup(groupName, models).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                prepareGroup(groupName, callback);
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                callback.onFailure(t);
+            }
+
+
+        });
+    }
+
+    private void prepareGroup(String groupName, final ApiCallback<Boolean> callback) {
+        mPhonexiaService.prepareSpeakerGroup(groupName).
+                enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if (response.code() == 202) {
+                            //startChecking(callback); TODO
+                            String location = response.headers().get("Location");
+                            location = location.substring(9, location.length());
+                            System.out.println(location);
+                        } else {
+                            callback.onSuccess(true);
+                        }
+                    }
+
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        callback.onFailure(t);
+                    }
+                });
+    }
+
+    private void startChecking(ApiCallback<Boolean> callback) {
         // TODO !!!!!
     }
 

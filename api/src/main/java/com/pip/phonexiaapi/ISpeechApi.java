@@ -9,7 +9,6 @@ import com.pip.phonexiaapi.data.SpeechRecognitionResult;
 import java.io.File;
 import java.util.List;
 
-import rx.Observable;
 import rx.Single;
 
 /**
@@ -28,13 +27,12 @@ public interface ISpeechApi {
 
     RecorderCallback getCallback();
 
-    void startSpeakerIdentification(
-            String groupName
-    );
 
     void createSpeakerModel(String userName, File wavFile, ApiCallback<AudioFileInfoResult> callback);
 
-    Single<List<String>> getUserModels();
+    void getUserModels(ApiCallback<List<String>> callback);
 
     void stopProcessing();
+
+    void createAndPrepareGroup(List<String> userModels, String groupName, ApiCallback<Boolean> callback);
 }

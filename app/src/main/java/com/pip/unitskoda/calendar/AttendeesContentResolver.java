@@ -25,9 +25,9 @@ public class AttendeesContentResolver {
     }
 
     public List<Attendee> getAllAttendees() {
-        return getAttendees(null);
+        return getAttendees(null, new ArrayList<String>());
     }
-    public List<Attendee> getAttendees(Long eventId) {
+    public List<Attendee> getAttendees(Long eventId, List<String> userModels) {
         // Fetch a list of all attendees sync'd with the device and their display names
         Cursor cursor = CalendarContract.Attendees.query(contentResolver, eventId, FIELDS);
 
@@ -38,7 +38,7 @@ public class AttendeesContentResolver {
                     String name = cursor.getString(0);
                     String email = cursor.getString(1);
                     String status = cursor.getString(2);
-                    attendees.add(new Attendee(name, email, status));
+                    attendees.add(new Attendee(name, email, status, userModels));
                 }
             }
         } catch (AssertionError ex) { /*TODO: log exception and bail*/ }

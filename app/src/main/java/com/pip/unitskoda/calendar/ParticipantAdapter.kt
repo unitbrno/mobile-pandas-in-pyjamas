@@ -17,15 +17,22 @@ class ParticipantAdapter : BaseRecyclerAdapter<Attendee, ParticipantViewHolder>(
 
         return ParticipantViewHolder(view)
     }
+
+    fun setUserModels() {
+        notifyDataSetChanged()
+    }
 }
 
 class ParticipantViewHolder(itemView: View) : BaseViewHolder<Attendee>(itemView) {
 
     val tvName:TextView = itemView.findViewById(R.id.tvName)
 
+
     override fun update() {
         tvName.text = item.name
     }
+
+
 
 }
 

@@ -48,7 +48,7 @@ dependencies {
 
     implementation appDependencies.butterknife
     annotationProcessor appDependencies.butterknifeAnnotationProc
-    implementation "com.kserno.androidcore:base:0.0.3"
+    implementation "com.kserno.androidcore:base:0.0.4"
 
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 
@@ -63,6 +63,7 @@ dependencies {
 
     implementation project(':api')
     implementation 'com.karumi:dexter:4.2.0'
+    implementation appDependencies.toasty
 
     compile 'it.macisamuele:calendarprovider-lib:0.0.1'
 

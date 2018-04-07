@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -26,9 +27,11 @@ import com.pip.unitskoda.calendar.ParticipantAdapter;
 import com.pip.unitskoda.di.main.DaggerMainComponent;
 import com.pip.unitskoda.di.main.MainComponent;
 import com.pip.unitskoda.di.main.MainModule;
+import com.pip.unitskoda.meeting.MeetingActivity;
 import com.pip.unitskoda.recording.Recorder;
 import com.pip.unitskoda.user.UserActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -49,6 +52,14 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
     private Spinner spCalendar;
     private TextView tvEventName;
     private RecyclerView rvParticipants;
+    private Button btSelectEvent;
+
+    private EventInfo mEventInfo;
+
+    private ParticipantAdapter mAdapter;
+
+    private List<Attendee> mAttendees = new ArrayList<>();
+    private List<String> userModels = new ArrayList<>();
 
     @Inject
     MainPresenter mPresenter;
@@ -60,10 +71,15 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
         spCalendar = findViewById(R.id.spCalendar);
         tvEventName = findViewById(R.id.tvEventName);
         rvParticipants = findViewById(R.id.rvParticipants);
+        btSelectEvent = findViewById(R.id.btSelectEvent);
+
+        mAdapter = new ParticipantAdapter();
+        mAdapter.addListener(this);
+        rvParticipants.setAdapter(mAdapter);
 
         // Microphone permissions
         Dexter.withActivity(this)
-                .withPermissions(Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_CALENDAR)
+                .withPermissions(Manifest.permission.READ_CALENDAR)
                 .withListener(new MultiplePermissionsListener() {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
@@ -76,7 +92,24 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
                 })
                 .check();
 
+        btSelectEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToMeeting();
+            }
+        });
 
+        mPresenter.loadModels();
+
+    }
+
+    private void goToMeeting() {
+        Intent intent = new Intent(this, MeetingActivity.class);
+
+        intent.putExtra(MeetingActivity.EXTRA_EVENT_NAME, mEventInfo.getTitle());
+        intent.putExtra(MeetingActivity.EXTRA_ATTENDEES, new ArrayList<>(mAttendees));
+
+        startActivity(intent);
     }
 
     @Override
@@ -109,9 +142,6 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
 
     private void onPermissionsGranted() {
         setupCalendarSelects();
-        mPresenter.startListening();
-
-
 
     }
 
@@ -149,25 +179,16 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
         if (events.isEmpty()) {
             // TODO display no pending events
         } else {
-            EventInfo event = events.get(0);
-            List<Attendee> attendees = CalendarManager.getAttendeesOfEvent(MainActivity.this, event);
+            mEventInfo = events.get(0);
+            mAttendees = CalendarManager.getAttendeesOfEvent(MainActivity.this, mEventInfo, userModels);
 
             // Event card
-            tvEventName.setText(event.getTitle());
+            tvEventName.setText(mEventInfo.getTitle());
 
             // Participants card
-            ParticipantAdapter participantAdapter = new ParticipantAdapter();
-            participantAdapter.setData(attendees);
+            mAdapter.setData(mAttendees);
 
-            participantAdapter.addListener(this);
-            rvParticipants.setAdapter(participantAdapter);
         }
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
 
     }
 
@@ -185,5 +206,14 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
 
         startActivity(intent);
 
+    }
+
+    @Override
+    public void showUserModels(List<String> userModels) {
+        this.userModels = userModels;
+        for (Attendee attendee: mAttendees) {
+            //attendee.models(userModels); TODO rozjebat kokota kusika
+        }
+        mAdapter.setUserModels();
     }
 }

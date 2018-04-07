@@ -1,29 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.MainActivity"
-    tools:layout_editor_absoluteY="81dp">
+    tools:context=".MainActivity"
+    android:orientation="vertical">
 
-    <ImageButton
-        android:id="@+id/ibStart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:src="@drawable/ic_start_record"
-        tools:layout_editor_absoluteX="44dp"
-        tools:layout_editor_absoluteY="352dp" />
 
-    <ImageButton
-        android:id="@+id/ibStop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:src="@drawable/ic_stop_record2"
-        tools:layout_editor_absoluteX="212dp"
-        tools:layout_editor_absoluteY="352dp" />
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardCalendarSelect"
@@ -32,12 +16,9 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:padding="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:padding="8dp">
 
-        <android.support.constraint.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -62,7 +43,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/tvSelectCalendar"
                 app:layout_constraintTop_toBottomOf="@+id/tvSelectCalendar" />
-        </android.support.constraint.ConstraintLayout>
+        </LinearLayout>
 
     </android.support.v7.widget.CardView>
 
@@ -73,12 +54,10 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:padding="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardCalendarSelect">
+        android:padding="8dp">
 
-        <android.support.constraint.ConstraintLayout
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -116,28 +95,37 @@
                 android:text="21. Feb 2018 15:00 - 16:00"
                 app:layout_constraintStart_toStartOf="@+id/tvEventName"
                 app:layout_constraintTop_toBottomOf="@+id/tvEventName" />
-        </android.support.constraint.ConstraintLayout>
+        </LinearLayout>
 
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardView2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_height="320dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardEvent">
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rvParticipants"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             tools:listitem="@layout/item_participant">
 
         </android.support.v7.widget.RecyclerView>
 
+
     </android.support.v7.widget.CardView>
-</android.support.constraint.ConstraintLayout>
+
+    <Button
+        android:id="@+id/btSelectEvent"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="start"/>
+
+
+
+
+</LinearLayout>
