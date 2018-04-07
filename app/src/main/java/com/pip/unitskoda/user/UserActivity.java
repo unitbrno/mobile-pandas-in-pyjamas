@@ -118,6 +118,7 @@ public class UserActivity extends BaseActivity implements UserContract.Screen {
     public void success() {
         new AlertDialog.Builder(this)
                 .setTitle("Success")
+                .setMessage("User model uploaded")
                 .show();
     }
 
@@ -126,9 +127,11 @@ public class UserActivity extends BaseActivity implements UserContract.Screen {
         if (mState == State.NOT_RECORDING) {
             mPresenter.startRecording(mAttendee.getEmail(), "record");
             mState = State.RECORDING;
+            ibStart.setImageDrawable(getResources().getDrawable(R.drawable.ic_stop_record2));
         } else {
             mPresenter.stopRecording();
             mState = State.NOT_RECORDING;
+            ibStart.setImageDrawable(getResources().getDrawable(R.drawable.ic_start_record));
         }
     }
 

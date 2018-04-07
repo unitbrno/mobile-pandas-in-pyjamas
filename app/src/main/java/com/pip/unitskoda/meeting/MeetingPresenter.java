@@ -13,6 +13,7 @@ import com.pip.phonexiaapi.data.Segment;
 import com.pip.phonexiaapi.data.Speaker;
 import com.pip.phonexiaapi.data.SpeakersResult;
 import com.pip.phonexiaapi.data.SpeechRecognitionResult;
+import com.pip.unitskoda.calendar.Attendee;
 import com.pip.unitskoda.recording.Recorder;
 
 import java.util.List;
@@ -31,6 +32,8 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.Screen> impl
     private static final String TAG = MeetingPresenter.class.getSimpleName();
 
     private ISpeechApi mApi;
+
+    private List<Attendee> mAttendees;
 
     @Inject
     public MeetingPresenter(ISpeechApi api, MeetingContract.Screen screen) {
@@ -68,11 +71,13 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.Screen> impl
     }
 
     @Override
-    public void startListening() {
+    public void startListening(List<Attendee> attendees) {
+
+        mAttendees = attendees;
 
         final RecorderCallback callback = mApi.getCallback();
 
-        mApi.realTimeProcessing(Recorder.RECORDER_SAMPLERATE, Language.CS_CZ, new RealTimeCallback<SpeechRecognitionResult>() {
+        mApi.realTimeProcessing(Recorder.RECORDER_SAMPLERATE, Language.ENGLISH, new RealTimeCallback<SpeechRecognitionResult>() {
             @Override
             public void onStarted() {
                 Recorder.INSTANCE.start(new Function1<byte[], Unit>() {
@@ -91,7 +96,23 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.Screen> impl
 
             @Override
             public void onSpeakerResult(SpeakersResult result) {
-                getScreen().showSpeaker(result.getResults().get(0).getSpeakerModel());
+
+                Speaker max = result.getResults().get(0);
+                for (int i = 1; i < result.getResults().size(); i++) {
+                    double speakerScore = result.getResults().get(i).getChannelScores().get(0).getScores().get(0).getScore();
+                    if (max.getChannelScores().get(0).getScores().get(0).getScore() < speakerScore) {
+                        max = result.getResults().get(i);
+                    }
+                }
+
+                String name = "";
+                for (Attendee attendee: mAttendees) {
+                    if (max.getSpeakerModel().equals(attendee.getEmail())) {
+                        name = attendee.getName();
+                    }
+                }
+
+                getScreen().showSpeaker(name);
             }
 
 

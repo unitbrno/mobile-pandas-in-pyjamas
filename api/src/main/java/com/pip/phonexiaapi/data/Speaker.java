@@ -31,7 +31,6 @@ public class Speaker implements Serializable{
     public static class ChannelScore {
 
         private int channel;
-        @SerializedName("channel_scores")
         private List<Score> scores;
 
         public int getChannel() {

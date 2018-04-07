@@ -20,7 +20,7 @@ object Recorder {
     private const val POST_RATE_MS = 500L
 
     var buffer = ByteArray(BUFFER_SIZE)
-    val timer = Timer()
+    var timer : Timer? = null
 
     var recorder : AudioRecord? = null
     // Using callback now but could be done better with RxJava (also multiple subscribers)
@@ -33,7 +33,8 @@ object Recorder {
             recorder?.startRecording()
 
         // Read audio buffer every POST_RATE_MS
-        timer.scheduleAtFixedRate(object : TimerTask() {
+        timer = Timer()
+        timer?.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
                 // Read audio buffer to buffer
                 val readSize = recorder?.read(buffer, 0, BUFFER_SIZE)
@@ -44,7 +45,7 @@ object Recorder {
     }
 
     fun stop() {
-        timer.cancel()
+        timer?.cancel()
         recorder?.stop()
         recorder?.release()
         recorder = null

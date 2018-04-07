@@ -71,7 +71,7 @@ public class MeetingActivity extends BaseActivity implements MeetingContract.Scr
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Intent intent = getIntent();
 
-        List<Attendee> attendees = (List<Attendee>) intent.getSerializableExtra(EXTRA_ATTENDEES);
+        final List<Attendee> attendees = (List<Attendee>) intent.getSerializableExtra(EXTRA_ATTENDEES);
 
         String groupName = intent.getStringExtra(EXTRA_EVENT_NAME);
 
@@ -92,7 +92,7 @@ public class MeetingActivity extends BaseActivity implements MeetingContract.Scr
                 .withListener(new MultiplePermissionsListener() {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
-                        mPresenter.startListening();
+                        mPresenter.startListening(attendees);
                     }
 
                     @Override

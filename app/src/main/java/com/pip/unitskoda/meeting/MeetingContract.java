@@ -1,5 +1,7 @@
 package com.pip.unitskoda.meeting;
 
+import com.pip.unitskoda.calendar.Attendee;
+
 import java.util.List;
 
 /**
@@ -14,6 +16,6 @@ public interface MeetingContract {
     }
     interface Presenter {
         void createAndPrepareGroup(List<String> userModels, String groupName);
-        void startListening();
+        void startListening(List<Attendee> attendees);
     }
 }
