@@ -4,12 +4,15 @@ import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -54,8 +57,9 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
 
     private Spinner spCalendar;
     private TextView tvEventName,tvDate;
-    private RecyclerView rvParticipants;
-    private Button btSelectEvent;
+    private RecyclerView rvParticipants, rvMemos;
+    private ImageView btAction;
+    private CardView cardCalendarSelect;
 
     private EventInfo mEventInfo;
 
@@ -64,6 +68,8 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
     private List<Attendee> mAttendees = new ArrayList<>();
     private List<String> userModels = new ArrayList<>();
 
+    private boolean isMeetingStarted = false;
+
     @Inject
     MainPresenter mPresenter;
 
@@ -71,10 +77,13 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        cardCalendarSelect = findViewById(R.id.cardCalendarSelect);
         spCalendar = findViewById(R.id.spCalendar);
         tvEventName = findViewById(R.id.tvEventName);
         rvParticipants = findViewById(R.id.rvParticipants);
-        btSelectEvent = findViewById(R.id.btSelectEvent);
+        rvMemos = findViewById(R.id.rvMemos);
+        btAction = findViewById(R.id.btAction);
+        btAction.setEnabled(false);
         tvDate = findViewById(R.id.tvDate);
 
         mAdapter = new ParticipantAdapter();
@@ -96,15 +105,13 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
                 })
                 .check();
 
-        btSelectEvent.setOnClickListener(new View.OnClickListener() {
+        btAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToMeeting();
+//                goToMeeting();
+                startMeeting();
             }
         });
-
-        mPresenter.loadModels();
-
     }
 
     private void goToMeeting() {
@@ -200,7 +207,7 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
 
             // Participants card
             mAdapter.setData(mAttendees);
-
+            mPresenter.loadModels();
         }
 
     }
@@ -218,15 +225,25 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
         intent.putExtra(EXTRA_ATTENDEE, item);
 
         startActivity(intent);
-
     }
 
     @Override
     public void showUserModels(List<String> userModels) {
-        this.userModels = userModels;
-        for (Attendee attendee: mAttendees) {
-            //attendee.models(userModels); TODO rozjebat kokota kusika
+        mAdapter.setUserModels(userModels);
+
+        btAction.setEnabled(checkStartCondition(userModels));
+    }
+
+    private boolean checkStartCondition(List<String> userModels) {
+        for (Attendee attendee : mAttendees) {
+            if (!userModels.contains(attendee.getEmail())) return false;
         }
-        mAdapter.setUserModels();
+        return true;
+    }
+
+    private void startMeeting() {
+        isMeetingStarted = true;
+
+        cardCalendarSelect.setVisibility(View.GONE);
     }
 }

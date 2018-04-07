@@ -35,10 +35,11 @@ import es.dmoral.toasty.Toasty;
 public class MeetingActivity extends BaseActivity implements MeetingContract.Screen {
 
     // List of strings
-    public static final String EXTRA_ATTENDEES= "EXTRA_ATTENDEES";
+    public static final String EXTRA_ATTENDEES = "EXTRA_ATTENDEES";
     public static final String EXTRA_EVENT_NAME = "EXTRA_EVENT_NAME";
 
-    @Inject MeetingPresenter mPresenter;
+    @Inject
+    MeetingPresenter mPresenter;
 
     private MeetingComponent mComponent;
 
@@ -77,12 +78,13 @@ public class MeetingActivity extends BaseActivity implements MeetingContract.Scr
 
         List<String> userModels = new ArrayList<>();
 
-        for (Attendee attendee: attendees) {
-            if (attendee.getModels().contains(attendee.getEmail())) {
-                userModels.add(attendee.getEmail());
-            }
+
+        for (Attendee attendee : attendees) {
+//            if (attendee.getModels().contains(attendee.getEmail())) {
+            userModels.add(attendee.getEmail());
+//            }
         }
-        groupName = groupName.replaceAll("\\s+","");
+        groupName = groupName.replaceAll("\\s+", "");
 
         mPresenter.createAndPrepareGroup(userModels, groupName);
 

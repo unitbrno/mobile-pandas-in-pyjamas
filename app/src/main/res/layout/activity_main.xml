@@ -125,7 +125,7 @@
         android:layout_marginTop="8dp">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/rvMembers"
+            android:id="@+id/rvMemos"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             tools:listitem="@layout/item_memo">
@@ -134,7 +134,7 @@
     </android.support.v7.widget.CardView>
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/btAction"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_gravity="center_horizontal"
