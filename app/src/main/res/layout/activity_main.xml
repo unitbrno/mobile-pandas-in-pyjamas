@@ -60,7 +60,7 @@
         <android.support.constraint.ConstraintLayout
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/tvTime"
@@ -86,7 +86,7 @@
             <TextView
                 android:id="@+id/tvDate"
                 android:layout_width="wrap_content"
-                android:layout_height="35dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:text="21. Feb 2018 15:00 - 16:00"
                 app:layout_constraintStart_toStartOf="parent"
@@ -96,7 +96,7 @@
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
-        android:id="@+id/cardView2"
+        android:id="@+id/cardViewParticipants"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_marginBottom="8dp"
@@ -107,7 +107,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rvParticipants"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
             tools:listitem="@layout/item_participant">
 
         </android.support.v7.widget.RecyclerView>
@@ -131,7 +131,7 @@
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardViewMemos"
-        android:layout_width="370dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
@@ -151,11 +151,12 @@
 
     <ImageView
         android:id="@+id/btAction"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="150dp"
+        android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:foregroundGravity="bottom|center"
         android:src="@drawable/ic_start_record"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

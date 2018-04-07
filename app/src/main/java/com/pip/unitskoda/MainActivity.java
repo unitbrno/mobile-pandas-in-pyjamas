@@ -64,7 +64,7 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
     private TextView tvEventName, tvDate, tvSpeakerName, tvSpokeText;
     private RecyclerView rvParticipants, rvMemos;
     private ImageView btAction;
-    private CardView cardCalendarSelect, cardViewMemos;
+    private CardView cardCalendarSelect, cardViewMemos, cardViewParticipants;
 
     private EventInfo mEventInfo;
 
@@ -86,6 +86,7 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
 
         cardCalendarSelect = findViewById(R.id.cardCalendarSelect);
         cardViewMemos = findViewById(R.id.cardViewMemos);
+        cardViewParticipants = findViewById(R.id.cardViewParticipants);
         spCalendar = findViewById(R.id.spCalendar);
         tvEventName = findViewById(R.id.tvEventName);
         tvSpeakerName = findViewById(R.id.tvSpeakerName);
@@ -283,6 +284,7 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
         btAction.setImageResource(R.drawable.ic_stop_record3);
 
         cardCalendarSelect.setVisibility(View.GONE);
+        cardViewParticipants.setVisibility(View.GONE);
 
         cardViewMemos.setVisibility(View.VISIBLE);
         tvSpeakerName.setVisibility(View.VISIBLE);
@@ -299,6 +301,7 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
         exportMeeting();
 
         cardCalendarSelect.setVisibility(View.VISIBLE);
+        cardViewParticipants.setVisibility(View.VISIBLE);
 
         cardViewMemos.setVisibility(View.GONE);
         tvSpeakerName.setVisibility(View.GONE);
