@@ -18,7 +18,8 @@ class ParticipantAdapter : BaseRecyclerAdapter<Attendee, ParticipantViewHolder>(
         return ParticipantViewHolder(view)
     }
 
-    fun setUserModels() {
+    fun setUserModels(userModels: List<String>) {
+        data.forEach { it.isInModel = userModels.contains(it.email) }
         notifyDataSetChanged()
     }
 }
@@ -26,10 +27,19 @@ class ParticipantAdapter : BaseRecyclerAdapter<Attendee, ParticipantViewHolder>(
 class ParticipantViewHolder(itemView: View) : BaseViewHolder<Attendee>(itemView) {
 
     val tvName:TextView = itemView.findViewById(R.id.tvName)
+    val tvEmail:TextView = itemView.findViewById(R.id.tvEmail)
 
 
     override fun update() {
+        // Color participant by usermodel
+        if (item.isInModel) {
+            itemView.setBackgroundColor(itemView.context.resources.getColor(R.color.primaryColor))
+        } else {
+            itemView.setBackgroundColor(itemView.context.resources.getColor(R.color.material_grey_50))
+        }
+
         tvName.text = item.name
+        tvEmail.text = item.email
     }
 
 

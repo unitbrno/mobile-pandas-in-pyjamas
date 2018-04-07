@@ -38,7 +38,7 @@ public class AttendeesContentResolver {
                     String name = cursor.getString(0);
                     String email = cursor.getString(1);
                     String status = cursor.getString(2);
-                    attendees.add(new Attendee(name, email, status, userModels));
+                    attendees.add(new Attendee(name, email, status, false));
                 }
             }
         } catch (AssertionError ex) { /*TODO: log exception and bail*/ }

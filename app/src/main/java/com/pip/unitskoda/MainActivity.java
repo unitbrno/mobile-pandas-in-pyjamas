@@ -4,12 +4,15 @@ import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -31,7 +34,10 @@ import com.pip.unitskoda.meeting.MeetingActivity;
 import com.pip.unitskoda.recording.Recorder;
 import com.pip.unitskoda.user.UserActivity;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -50,9 +56,10 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
     public static final String EXTRA_ATTENDEE = "EXTRA_ATTENDEE";
 
     private Spinner spCalendar;
-    private TextView tvEventName;
-    private RecyclerView rvParticipants;
-    private Button btSelectEvent;
+    private TextView tvEventName, tvDate;
+    private RecyclerView rvParticipants, rvMemos;
+    private ImageView btAction;
+    private CardView cardCalendarSelect, cardViewMemos;
 
     private EventInfo mEventInfo;
 
@@ -61,6 +68,8 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
     private List<Attendee> mAttendees = new ArrayList<>();
     private List<String> userModels = new ArrayList<>();
 
+    private boolean isMeetingStarted = false;
+
     @Inject
     MainPresenter mPresenter;
 
@@ -68,10 +77,15 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        cardCalendarSelect = findViewById(R.id.cardCalendarSelect);
+        cardViewMemos = findViewById(R.id.cardViewMemos);
         spCalendar = findViewById(R.id.spCalendar);
         tvEventName = findViewById(R.id.tvEventName);
         rvParticipants = findViewById(R.id.rvParticipants);
-        btSelectEvent = findViewById(R.id.btSelectEvent);
+        rvMemos = findViewById(R.id.rvMemos);
+        btAction = findViewById(R.id.btAction);
+        btAction.setEnabled(false);
+        tvDate = findViewById(R.id.tvDate);
 
         mAdapter = new ParticipantAdapter();
         mAdapter.addListener(this);
@@ -92,15 +106,15 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
                 })
                 .check();
 
-        btSelectEvent.setOnClickListener(new View.OnClickListener() {
+        btAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToMeeting();
+//                goToMeeting();
+                if (!isMeetingStarted)
+                    startMeeting();
+                else endMeeting();
             }
         });
-
-        mPresenter.loadModels();
-
     }
 
     private void goToMeeting() {
@@ -185,9 +199,18 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
             // Event card
             tvEventName.setText(mEventInfo.getTitle());
 
+            Date startdate = mEventInfo.getStartDate();
+            Date enddate = mEventInfo.getEndDate();
+
+            Format formatter = new SimpleDateFormat("hh:mm dd. MMM yyyy");
+            String start = formatter.format(startdate);
+            String end = formatter.format(enddate);
+
+            tvDate.setText(start + " - " + end);
+
             // Participants card
             mAdapter.setData(mAttendees);
-
+            mPresenter.loadModels();
         }
 
     }
@@ -205,15 +228,47 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
         intent.putExtra(EXTRA_ATTENDEE, item);
 
         startActivity(intent);
-
     }
 
     @Override
     public void showUserModels(List<String> userModels) {
-        this.userModels = userModels;
-        for (Attendee attendee: mAttendees) {
-            //attendee.models(userModels); TODO rozjebat kokota kusika
+        mAdapter.setUserModels(userModels);
+
+        btAction.setEnabled(checkStartCondition(userModels));
+    }
+
+    private boolean checkStartCondition(List<String> userModels) {
+        for (Attendee attendee : mAttendees) {
+            if (!userModels.contains(attendee.getEmail())) return false;
         }
-        mAdapter.setUserModels();
+        return true;
+    }
+
+    private void startMeeting() {
+        isMeetingStarted = true;
+
+        btAction.setImageResource(R.drawable.ic_stop_record3);
+
+        cardCalendarSelect.setVisibility(View.GONE);
+
+        cardViewMemos.setVisibility(View.VISIBLE);
+    }
+
+    private void endMeeting() {
+
+        exportMeeting();
+
+        cardCalendarSelect.setVisibility(View.VISIBLE);
+
+        cardViewMemos.setVisibility(View.GONE);
+
+        btAction.setImageResource(R.drawable.ic_start_record);
+
+    }
+
+
+    private void exportMeeting() {
+        //TODO export attendees, event info and memos
+
     }
 }
