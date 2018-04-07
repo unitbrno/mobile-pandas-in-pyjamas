@@ -1,4 +1,4 @@
-package com.pip.unitskoda.data
+package com.pip.unitskoda.memo
 
 import com.pip.unitskoda.calendar.Attendee
 

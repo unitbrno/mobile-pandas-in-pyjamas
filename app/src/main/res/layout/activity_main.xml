@@ -144,7 +144,7 @@
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/ic_start_record" />
+        android:src="@drawable/ic_start_record" />
 
 
 </LinearLayout>

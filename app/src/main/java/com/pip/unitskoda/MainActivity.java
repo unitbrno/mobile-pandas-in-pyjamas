@@ -247,7 +247,7 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
     private void startMeeting() {
         isMeetingStarted = true;
 
-        btAction.setImageResource(R.drawable.ic_start_record);
+        btAction.setImageResource(R.drawable.ic_stop_record3);
 
         cardCalendarSelect.setVisibility(View.GONE);
 
@@ -266,7 +266,9 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
 
     }
 
+
     private void exportMeeting() {
-        //TODO
+        //TODO export attendees, event info and memos
+
     }
 }
