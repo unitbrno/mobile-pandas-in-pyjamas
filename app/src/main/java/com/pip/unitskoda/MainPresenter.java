@@ -70,7 +70,7 @@ public class MainPresenter extends BasePresenter<MainContract.Screen> implements
         });
     }
 
-    public void startListening(List<Attendee> attendees) {
+    public void startListening(List<Attendee> attendees, final List<String> userModels, final String title) {
 
         mAttendees = attendees;
 
@@ -79,6 +79,7 @@ public class MainPresenter extends BasePresenter<MainContract.Screen> implements
         mApi.realTimeProcessing(Recorder.RECORDER_SAMPLERATE, Language.ENGLISH, new RealTimeCallback<SpeechRecognitionResult>() {
             @Override
             public void onStarted() {
+                 createAndPrepareGroup(userModels, title);
                 Recorder.INSTANCE.start(new Function1<byte[], Unit>() {
                     @Override
                     public Unit invoke(byte[] bytes) {

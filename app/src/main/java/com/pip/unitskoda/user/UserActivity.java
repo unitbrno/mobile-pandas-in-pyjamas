@@ -44,7 +44,6 @@ public class UserActivity extends BaseActivity implements UserContract.Screen {
 
     private Attendee mAttendee;
 
-
     @Override
     protected void createPresenter() {
         getComponent().inject(this);

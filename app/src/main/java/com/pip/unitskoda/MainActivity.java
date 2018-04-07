@@ -290,8 +290,7 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
         tvSpeakerName.setVisibility(View.VISIBLE);
         tvSpokeText.setVisibility(View.VISIBLE);
 
-        mPresenter.startListening(mAttendees);
-        mPresenter.createAndPrepareGroup(userModels, mEventInfo.getTitle());
+        mPresenter.startListening(mAttendees, userModels, mEventInfo.getTitle());
 
     }
 
