@@ -16,13 +16,12 @@ import android.provider.MediaStore;
 
 import javax.inject.Inject;
 
-import cafe.adriel.androidaudioconverter.AndroidAudioConverter;
-import cafe.adriel.androidaudioconverter.callback.IConvertCallback;
 
 public class ExtAudioRecorder {
     private File file;
-    private MediaRecorder recorder;
     private Context mContext;
+
+    private WavAudioRecorder mRecorder;
 
     @Inject
     public ExtAudioRecorder(Context context) {
@@ -30,60 +29,35 @@ public class ExtAudioRecorder {
     }
 
 
-
     public void startRecording(String fileName) {
 
-        file = new File(Environment.getExternalStorageDirectory(), fileName + ".mp4");
-
-        recorder = new MediaRecorder();
-
-        ContentValues values = new ContentValues(3);
-
-        values.put(MediaStore.MediaColumns.TITLE, fileName);
-        recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
-        recorder.setOutputFile(file.getAbsolutePath());
+        file = new File(mContext.getFilesDir(), fileName + ".wav");
         try {
-            recorder.prepare();
+            file.createNewFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        recorder.start();
+
+        mRecorder = WavAudioRecorder.getInstance();
+        mRecorder.setOutputFile(file.getAbsolutePath());
+        mRecorder.prepare();
+        mRecorder.start();
     }
 
     public File stop(final Callback fileCallback) {
-        recorder.stop();
-        recorder.release();
+        release();
 
-        recorder = null;
-
-        IConvertCallback callback = new IConvertCallback() {
-            @Override
-            public void onSuccess(File file) {
-                fileCallback.onSuccess(file);
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                fileCallback.onFail(e);
-            }
-        };
-        AndroidAudioConverter.with(mContext)
-                .setFile(file)
-                .setFormat(cafe.adriel.androidaudioconverter.model.AudioFormat.WAV)
-                .setCallback(callback)
-                .convert();
+        fileCallback.onSuccess(file);
 
         return file;
     }
 
 
     public void release() {
-        if (recorder != null) {
-            recorder.release();
-            recorder.stop();
-            recorder = null;
+        if (mRecorder != null) {
+            mRecorder.stop();
+            mRecorder.reset();
+            mRecorder = null;
         }
 
     }

@@ -79,7 +79,7 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
 
         // Microphone permissions
         Dexter.withActivity(this)
-                .withPermissions(Manifest.permission.READ_CALENDAR)
+                .withPermissions(Manifest.permission.READ_CALENDAR, Manifest.permission.RECORD_AUDIO)
                 .withListener(new MultiplePermissionsListener() {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
