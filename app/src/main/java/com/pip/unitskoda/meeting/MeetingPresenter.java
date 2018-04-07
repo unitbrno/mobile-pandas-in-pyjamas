@@ -73,66 +73,7 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.Screen> impl
     @Override
     public void startListening(List<Attendee> attendees) {
 
-        mAttendees = attendees;
-
-        final RecorderCallback callback = mApi.getCallback();
-
-        mApi.realTimeProcessing(Recorder.RECORDER_SAMPLERATE, Language.ENGLISH, new RealTimeCallback<SpeechRecognitionResult>() {
-            @Override
-            public void onStarted() {
-                Recorder.INSTANCE.start(new Function1<byte[], Unit>() {
-                    @Override
-                    public Unit invoke(byte[] bytes) {
-                        callback.onRecording(bytes);
-                        return null;
-                    }
-                });
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                t.printStackTrace();
-            }
-
-            @Override
-            public void onSpeakerResult(SpeakersResult result) {
-
-                Speaker max = result.getResults().get(0);
-                for (int i = 1; i < result.getResults().size(); i++) {
-                    double speakerScore = result.getResults().get(i).getChannelScores().get(0).getScores().get(0).getScore();
-                    if (max.getChannelScores().get(0).getScores().get(0).getScore() < speakerScore) {
-                        max = result.getResults().get(i);
-                    }
-                }
-
-                String name = "";
-                for (Attendee attendee: mAttendees) {
-                    if (max.getSpeakerModel().equals(attendee.getEmail())) {
-                        name = attendee.getName();
-                    }
-                }
-
-                getScreen().showSpeaker(name);
-            }
-
-
-            @Override
-            public void onResult(SpeechRecognitionResult result) {
-                StringBuilder sb = new StringBuilder();
-                for (Segment segment: result.getRecognitionResult().getSegments()) {
-                    sb.append(segment.getWord());
-                    sb.append(", ");
-                }
-
-                getScreen().showText(sb.toString());
-            }
-
-            @Override
-            public void finished() {
-
-            }
-        });
-
-
     }
+
+
 }

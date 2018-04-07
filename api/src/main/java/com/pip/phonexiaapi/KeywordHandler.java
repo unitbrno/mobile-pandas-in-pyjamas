@@ -126,4 +126,8 @@ public class KeywordHandler {
     }
 
 
+    public State getState() {
+        return mState;
+    }
+
 }

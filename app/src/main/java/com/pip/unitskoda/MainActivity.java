@@ -42,6 +42,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import es.dmoral.toasty.Toasty;
 import it.macisamuele.calendarprovider.CalendarInfo;
 import it.macisamuele.calendarprovider.EventInfo;
 
@@ -115,6 +116,7 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
                 else endMeeting();
             }
         });
+
     }
 
     private void goToMeeting() {
@@ -237,6 +239,22 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
         btAction.setEnabled(checkStartCondition(userModels));
     }
 
+    @Override
+    public void showSpeaker(String name) {
+
+
+    }
+
+    @Override
+    public void speakerRecognitionPrepared() {
+        Toasty.success(this, "SID connected").show();
+    }
+
+    @Override
+    public void showText(List<String> text) {
+
+    }
+
     private boolean checkStartCondition(List<String> userModels) {
         for (Attendee attendee : mAttendees) {
             if (!userModels.contains(attendee.getEmail())) return false;
@@ -252,6 +270,10 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
         cardCalendarSelect.setVisibility(View.GONE);
 
         cardViewMemos.setVisibility(View.VISIBLE);
+
+        mPresenter.startListening(mAttendees);
+        mPresenter.createAndPrepareGroup(userModels, mEventInfo.getTitle());
+
     }
 
     private void endMeeting() {
@@ -263,7 +285,7 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
         cardViewMemos.setVisibility(View.GONE);
 
         btAction.setImageResource(R.drawable.ic_start_record);
-
+        mPresenter.stopStream();
     }
 
 

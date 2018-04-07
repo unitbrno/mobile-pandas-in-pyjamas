@@ -9,6 +9,9 @@ import java.util.List;
 public interface MainContract {
     interface Screen {
         void showUserModels(List<String> userModels);
+        void showSpeaker(String name);
+        void speakerRecognitionPrepared();
+        void showText(List<String> text);
     }
     interface Presenter {
         void loadModels();
