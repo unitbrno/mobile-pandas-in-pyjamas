@@ -61,7 +61,7 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
     public static final String EXTRA_ATTENDEE = "EXTRA_ATTENDEE";
 
     private Spinner spCalendar;
-    private TextView tvEventName, tvDate;
+    private TextView tvEventName, tvDate, tvSpeakerName, tvSpokeText;
     private RecyclerView rvParticipants, rvMemos;
     private ImageView btAction;
     private CardView cardCalendarSelect, cardViewMemos;
@@ -88,6 +88,8 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
         cardViewMemos = findViewById(R.id.cardViewMemos);
         spCalendar = findViewById(R.id.spCalendar);
         tvEventName = findViewById(R.id.tvEventName);
+        tvSpeakerName = findViewById(R.id.tvSpeakerName);
+        tvSpokeText = findViewById(R.id.tvSpokeText);
         rvParticipants = findViewById(R.id.rvParticipants);
         rvMemos = findViewById(R.id.rvMemos);
         btAction = findViewById(R.id.btAction);
@@ -252,8 +254,7 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
 
     @Override
     public void showSpeaker(String name) {
-
-
+        tvSpeakerName.setText(name);
     }
 
     @Override
@@ -284,6 +285,8 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
         cardCalendarSelect.setVisibility(View.GONE);
 
         cardViewMemos.setVisibility(View.VISIBLE);
+        tvSpeakerName.setVisibility(View.VISIBLE);
+        tvSpokeText.setVisibility(View.VISIBLE);
 
         mPresenter.startListening(mAttendees);
         mPresenter.createAndPrepareGroup(userModels, mEventInfo.getTitle());
@@ -291,12 +294,15 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
     }
 
     private void endMeeting() {
+        isMeetingStarted = false;
 
         exportMeeting();
 
         cardCalendarSelect.setVisibility(View.VISIBLE);
 
         cardViewMemos.setVisibility(View.GONE);
+        tvSpeakerName.setVisibility(View.GONE);
+        tvSpokeText.setVisibility(View.GONE);
 
         btAction.setImageResource(R.drawable.ic_start_record);
         mPresenter.stopStream();
