@@ -56,10 +56,10 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
     public static final String EXTRA_ATTENDEE = "EXTRA_ATTENDEE";
 
     private Spinner spCalendar;
-    private TextView tvEventName,tvDate;
+    private TextView tvEventName, tvDate;
     private RecyclerView rvParticipants, rvMemos;
     private ImageView btAction;
-    private CardView cardCalendarSelect;
+    private CardView cardCalendarSelect, cardViewMemos;
 
     private EventInfo mEventInfo;
 
@@ -78,6 +78,7 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
         super.onCreate(savedInstanceState);
 
         cardCalendarSelect = findViewById(R.id.cardCalendarSelect);
+        cardViewMemos = findViewById(R.id.cardViewMemos);
         spCalendar = findViewById(R.id.spCalendar);
         tvEventName = findViewById(R.id.tvEventName);
         rvParticipants = findViewById(R.id.rvParticipants);
@@ -109,7 +110,9 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
             @Override
             public void onClick(View v) {
 //                goToMeeting();
-                startMeeting();
+                if (!isMeetingStarted)
+                    startMeeting();
+                else endMeeting();
             }
         });
     }
@@ -244,6 +247,26 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
     private void startMeeting() {
         isMeetingStarted = true;
 
+        btAction.setImageResource(R.drawable.ic_start_record);
+
         cardCalendarSelect.setVisibility(View.GONE);
+
+        cardViewMemos.setVisibility(View.VISIBLE);
+    }
+
+    private void endMeeting() {
+
+        exportMeeting();
+
+        cardCalendarSelect.setVisibility(View.VISIBLE);
+
+        cardViewMemos.setVisibility(View.GONE);
+
+        btAction.setImageResource(R.drawable.ic_start_record);
+
+    }
+
+    private void exportMeeting() {
+        //TODO
     }
 }

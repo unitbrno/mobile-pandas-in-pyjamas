@@ -62,22 +62,19 @@
             android:id="@+id/attend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_tick"
-            android:onClick="onRadioButtonClicked" />
+            android:drawableStart="@drawable/ic_tick"/>
 
         <RadioButton
             android:id="@+id/excused"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_excused"
-            android:onClick="onRadioButtonClicked" />
+            android:drawableStart="@drawable/ic_excused" />
 
         <RadioButton
             android:id="@+id/not_excused"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_not_excused"
-            android:onClick="onRadioButtonClicked" />
+            android:drawableStart="@drawable/ic_not_excused"/>
     </RadioGroup>
 
 </android.support.constraint.ConstraintLayout>
