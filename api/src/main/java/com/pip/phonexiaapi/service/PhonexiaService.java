@@ -32,42 +32,40 @@ import rx.Single;
 
 public interface PhonexiaService {
 
-
    @GET("/technologies")
-   Single<ReqResult<TechnologiesResult>> getTechnologiesAvailable();
+   Call<ReqResult<TechnologiesResult>> getTechnologiesAvailable();
 
    // <----- dictate begin ------->
 
 
    @POST("/stream/http")
-   Single<ReqResult<StreamResult>> startStream(
+   Call<ReqResult<StreamResult>> startStream(
            @Query("frequency") int frequency,
            @Query("n_channels") Integer numberOfChannels,
            @Query("path") String pathToFile // path to file where saved if not set no data is saved
-
    );
 
 
    @POST("/technologies/dictate")
-   Single<ReqResult<AttachDictateResult>> attachDictate(
+   Call<ReqResult<AttachDictateResult>> attachDictate(
            @Query("stream") String streamId,
            @Query("model") Language language
    );
 
    @PUT("/stream/http")
-   Single<Response<ResponseBody>> sendChunksOfData(
+   Call<Void> sendChunksOfData(
            @Query("stream") String streamId,
-           @Body short[] S16IErawData
+           @Body RequestBody S16IErawData
    );
 
    @GET("/technologies/dictate")
-   Single<ReqResult<SpeechRecognitionResult>> getResults(
+   Call<ReqResult<SpeechRecognitionResult>> getResults(
            @Query("task") String task
    );
 
 
    @DELETE("/stream/http")
-   Single closeStream(
+   Call<Void> closeStream(
            @Query("stream") String streamId
    );
 
@@ -120,7 +118,7 @@ public interface PhonexiaService {
     );
 
     @PUT("/technologies/speakerid/speakermodels/{user_name}/prepare?model=XL3")
-    Single<Response<ResponseBody>> prepareSpeakerModel(
+    Call<Void> prepareSpeakerModel(
             @Path("user_name") String speakerName
     );
 
@@ -129,18 +127,17 @@ public interface PhonexiaService {
             @Path("group_name") String groupName
     );
 
-    @POST("/technologies/speakerid/stream")
-    Single<ReqResult<SpeakerStreamResult>> postChunksToStream(
-            @Query("group") String groupName
+    @POST("/technologies/speakerid/stream?model=XL3")
+    Call<ReqResult<SpeakerStreamResult>> addSidToStream(
+            @Query("group") String groupName,
+            @Query("stream") String streamId
 
     );
 
     @GET("/technologies/speakerid/stream")
-    Single<ReqResult<SpeakersResult>> getSpeakersResults(
+    Call<ReqResult<SpeakersResult>> getSpeakersResults(
             @Query("task") String taskId
     );
-
-
 
 
     // <------- Speaker identification end --------->

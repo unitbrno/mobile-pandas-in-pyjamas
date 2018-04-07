@@ -5,21 +5,12 @@ import android.util.Log;
 import com.kserno.baseclasses.BasePresenter;
 import com.pip.phonexiaapi.ApiCallback;
 import com.pip.phonexiaapi.ISpeechApi;
-import com.pip.phonexiaapi.RealTimeCallback;
-import com.pip.phonexiaapi.RecorderCallback;
-import com.pip.phonexiaapi.data.Language;
-import com.pip.phonexiaapi.data.Speaker;
-import com.pip.phonexiaapi.data.SpeechRecognitionResult;
-import com.pip.unitskoda.recording.Recorder;
+
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 
 /**
  * Created by filipsollar on 6.4.18.
@@ -47,8 +38,6 @@ public class MainPresenter extends BasePresenter<MainContract.Screen> implements
     public void stop() {
 
     }
-
-
 
     @Override
     public void loadModels() {

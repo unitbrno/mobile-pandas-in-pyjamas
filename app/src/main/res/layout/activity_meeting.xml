@@ -11,12 +11,13 @@
 
     <TextView
         android:id="@+id/tvSpeakerName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_width="match_parent"
+        android:layout_height="30dp" />
 
     <TextView
-        android:id="@+id/tvRecognizedName"
-        android:layout_width="wrap_content"
+        android:id="@+id/tvText"
+        android:layout_below="@id/tvSpeakerName"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
 

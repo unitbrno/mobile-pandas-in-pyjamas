@@ -9,7 +9,9 @@ import com.pip.phonexiaapi.RealTimeCallback;
 import com.pip.phonexiaapi.RecorderCallback;
 import com.pip.phonexiaapi.SpeechApi;
 import com.pip.phonexiaapi.data.Language;
+import com.pip.phonexiaapi.data.Segment;
 import com.pip.phonexiaapi.data.Speaker;
+import com.pip.phonexiaapi.data.SpeakersResult;
 import com.pip.phonexiaapi.data.SpeechRecognitionResult;
 import com.pip.unitskoda.recording.Recorder;
 
@@ -45,6 +47,7 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.Screen> impl
     @Override
     public void stop() {
         Recorder.INSTANCE.stop();
+        mApi.stopProcessing();
     }
 
     @Override
@@ -67,16 +70,15 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.Screen> impl
     @Override
     public void startListening() {
 
-
         final RecorderCallback callback = mApi.getCallback();
 
-        mApi.realTimeProcessing(Recorder.RECORDER_SAMPLERATE, Language.ENGLISH, new RealTimeCallback<SpeechRecognitionResult>() {
+        mApi.realTimeProcessing(Recorder.RECORDER_SAMPLERATE, Language.CS_CZ, new RealTimeCallback<SpeechRecognitionResult>() {
             @Override
             public void onStarted() {
-                Recorder.INSTANCE.start(new Function1<short[], Unit>() {
+                Recorder.INSTANCE.start(new Function1<byte[], Unit>() {
                     @Override
-                    public Unit invoke(short[] shorts) {
-                        callback.onRecording(shorts);
+                    public Unit invoke(byte[] bytes) {
+                        callback.onRecording(bytes);
                         return null;
                     }
                 });
@@ -88,13 +90,20 @@ public class MeetingPresenter extends BasePresenter<MeetingContract.Screen> impl
             }
 
             @Override
-            public void onSpeakerResult(Speaker speaker) {
-                Log.d(TAG, speaker.toString());
+            public void onSpeakerResult(SpeakersResult result) {
+                getScreen().showSpeaker(result.getResults().get(0).getSpeakerModel());
             }
+
 
             @Override
             public void onResult(SpeechRecognitionResult result) {
-                System.out.println(result.toString());
+                StringBuilder sb = new StringBuilder();
+                for (Segment segment: result.getRecognitionResult().getSegments()) {
+                    sb.append(segment.getWord());
+                    sb.append(", ");
+                }
+
+                getScreen().showText(sb.toString());
             }
 
             @Override

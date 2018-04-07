@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -41,6 +42,10 @@ public class MeetingActivity extends BaseActivity implements MeetingContract.Scr
 
     private MeetingComponent mComponent;
 
+    private TextView tvText;
+    private TextView tvSpeaker;
+
+
     @Override
     protected void createPresenter() {
         getComponent().inject(this);
@@ -59,6 +64,9 @@ public class MeetingActivity extends BaseActivity implements MeetingContract.Scr
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        tvSpeaker = findViewById(R.id.tvSpeakerName);
+        tvText = findViewById(R.id.tvText);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Intent intent = getIntent();
@@ -80,7 +88,7 @@ public class MeetingActivity extends BaseActivity implements MeetingContract.Scr
 
         // Microphone permissions
         Dexter.withActivity(this)
-                .withPermissions(Manifest.permission.READ_CALENDAR)
+                .withPermissions(Manifest.permission.READ_CALENDAR, Manifest.permission.RECORD_AUDIO)
                 .withListener(new MultiplePermissionsListener() {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
@@ -97,17 +105,23 @@ public class MeetingActivity extends BaseActivity implements MeetingContract.Scr
 
     @Override
     public void speakerRecognitionPrepared() {
-        Toasty.success(this, "SID connected");
+        Toasty.success(this, "SID connected").show();
     }
 
     @Override
     public void showText(String text) {
+        tvText.setText(text);
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mPresenter.stop();
     }
 
     @Override
     public void showSpeaker(String name) {
-
+        tvSpeaker.setText(name);
     }
 
     private MeetingComponent getComponent() {

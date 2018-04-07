@@ -7,6 +7,6 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public enum Language {
-    @SerializedName("CS_CZ") CZECH,
+    CS_CZ,
     ENGLISH
 }

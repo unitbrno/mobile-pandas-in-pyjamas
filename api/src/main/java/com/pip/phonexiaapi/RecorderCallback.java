@@ -5,6 +5,6 @@ package com.pip.phonexiaapi;
  */
 
 public interface RecorderCallback {
-    void onRecording(short[] data);
+    void onRecording(byte[] data);
     void finished();
 }
