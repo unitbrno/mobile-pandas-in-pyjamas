@@ -11,8 +11,9 @@ import java.util.List;
 public interface MeetingContract {
     interface Screen{
         void speakerRecognitionPrepared();
-        void showText(String text);
+        void showText(List<String> text);
         void showSpeaker(String name);
+        void showText(String text);
     }
     interface Presenter {
         void createAndPrepareGroup(List<String> userModels, String groupName);

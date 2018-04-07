@@ -37,6 +37,7 @@ public class MeetingActivity extends BaseActivity implements MeetingContract.Scr
     // List of strings
     public static final String EXTRA_ATTENDEES = "EXTRA_ATTENDEES";
     public static final String EXTRA_EVENT_NAME = "EXTRA_EVENT_NAME";
+    public static final String EXTRA_LIST = "EXTRA_LIST";
 
     @Inject
     MeetingPresenter mPresenter;
@@ -73,17 +74,12 @@ public class MeetingActivity extends BaseActivity implements MeetingContract.Scr
         Intent intent = getIntent();
 
         final List<Attendee> attendees = (List<Attendee>) intent.getSerializableExtra(EXTRA_ATTENDEES);
+        final List<String> userModels = intent.getStringArrayListExtra(EXTRA_LIST);
 
         String groupName = intent.getStringExtra(EXTRA_EVENT_NAME);
 
-        List<String> userModels = new ArrayList<>();
 
 
-        for (Attendee attendee : attendees) {
-//            if (attendee.getModels().contains(attendee.getEmail())) {
-            userModels.add(attendee.getEmail());
-//            }
-        }
         groupName = groupName.replaceAll("\\s+", "");
 
         mPresenter.createAndPrepareGroup(userModels, groupName);
@@ -103,11 +99,17 @@ public class MeetingActivity extends BaseActivity implements MeetingContract.Scr
                 })
                 .check();
 
+
     }
 
     @Override
     public void speakerRecognitionPrepared() {
         Toasty.success(this, "SID connected").show();
+    }
+
+    @Override
+    public void showText(List<String> text) {
+
     }
 
     @Override
@@ -136,3 +138,4 @@ public class MeetingActivity extends BaseActivity implements MeetingContract.Scr
         return mComponent;
     }
 }
+

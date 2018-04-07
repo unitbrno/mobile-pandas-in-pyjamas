@@ -131,10 +131,10 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
         btAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                goToMeeting();
-                if (!isMeetingStarted)
+                goToMeeting();
+                /*if (!isMeetingStarted)
                     startMeeting();
-                else endMeeting();
+                else endMeeting();*/
             }
         });
 
@@ -145,6 +145,7 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
 
         intent.putExtra(MeetingActivity.EXTRA_EVENT_NAME, mEventInfo.getTitle());
         intent.putExtra(MeetingActivity.EXTRA_ATTENDEES, new ArrayList<>(mAttendees));
+        intent.putExtra(MeetingActivity.EXTRA_LIST, (ArrayList) userModels);
 
         startActivity(intent);
     }
@@ -255,6 +256,7 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
 
     @Override
     public void showUserModels(List<String> userModels) {
+        this.userModels = userModels;
         mAdapter.setUserModels(userModels);
 
         btAction.setEnabled(checkStartCondition(userModels));
@@ -305,7 +307,6 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
         tvSpeakerName.setVisibility(View.VISIBLE);
         tvSpokeText.setVisibility(View.VISIBLE);
 
-        mPresenter.startListening(mAttendees, userModels, mEventInfo.getTitle());
 
     }
 
@@ -323,7 +324,6 @@ public class MainActivity extends BaseActivity implements MainContract.Screen, B
         tvSpokeText.setVisibility(View.GONE);
 
         btAction.setImageResource(R.drawable.ic_start_record);
-        mPresenter.stopStream();
     }
 
 
