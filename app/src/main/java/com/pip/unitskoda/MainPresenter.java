@@ -51,7 +51,7 @@ public class MainPresenter extends BasePresenter<MainContract.Screen> implements
 
     @Override
     public void stop() {
-
+        stopStream();
     }
 
     public void createAndPrepareGroup(List<String> userModels, String groupName) {
